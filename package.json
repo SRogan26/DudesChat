@@ -4,6 +4,9 @@
   "description": "",
   "main": "server/server.js",
   "scripts": {
+    "develop": "concurrently \"cd server && npm run start\" \"cd client && npm start\"",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "build": "cd client && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/SRogan26/DudesChat/issues"
   },
-  "homepage": "https://github.com/SRogan26/DudesChat#readme"
+  "homepage": "https://github.com/SRogan26/DudesChat#readme",
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
 }
