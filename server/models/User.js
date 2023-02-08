@@ -2,6 +2,11 @@ const { model, Schema } = require("mongoose");
 const bcrypt = require("bcrypt");
 const SALT_WORK_FACTOR = 10;
 
+const validateEmail = function(email) {
+  const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email)
+};
+
 const userSchema = new Schema({
   username: {
     type: String,
@@ -9,14 +14,21 @@ const userSchema = new Schema({
     unique: true,
     minLength: [6, "Username needs at least 6 characters"],
     maxLength: [45, "Username can have no more than 45 characters"],
+    trim: true,
   },
-  firstName: String,
-  lastName: String,
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: [validateEmail, 'Please provide a valid email address'],
+  },
   password: {
     type: String,
     required: true,
     minLength: [8, "Password needs at least 8 characters"],
   },
+  firstName: String,
+  lastName: String,
 });
 
 userSchema.pre("save", async function (next) {
