@@ -4,8 +4,9 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 import express from "express";
 import http from "http";
 import cors from "cors";
-import { resolvers, typeDefs } from './schemas/index.mjs'
- 
+import { resolvers, typeDefs } from "./schemas/index.mjs";
+import db from "./config/connection.js";
+
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -23,6 +24,10 @@ app.use(
   express.json(),
   expressMiddleware(server)
 );
+
+db.once("open", () => {
+  console.log('DB Connected')
+});
 
 await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
 console.log(`🚀 Server ready at http://localhost:4000`);
