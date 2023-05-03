@@ -15,27 +15,28 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../utils/mutations';
 
-
 const theme = createTheme();
 
 export default function SignUp() {
-  const [state, setState] = useState({ email: '', password: '' });
+  const [state, setState] = useState({ firstName: '', lastName: '',  email: '', username: '', password: '' });
   const [addUser, { error, data }] = useMutation(ADD_USER);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      console.log(state);
       const { data } = await addUser({
-        variables: { ...state }
+        variables: { ...state },
       });
+      console.log(data);
     } catch (err) {
       console.log(err);
-    };
+    }
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component='main' maxWidth='xs'>
         <CssBaseline />
         <Box
           sx={{
@@ -48,19 +49,25 @@ export default function SignUp() {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component='h1' variant='h5'>
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box
+            component='form'
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 3 }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  autoComplete="given-name"
-                  name="firstName"
+                  autoComplete='given-name'
+                  name='signUpFirstName'
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
+                  id='firstName'
+                  label='First Name'
+                  value={state.firstName}
                   autoFocus
                 />
               </Grid>
@@ -68,48 +75,52 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  id='signUpLastName'
+                  label='Last Name'
+                  name='lastName'
+                  value={state.lastName}
+                  autoComplete='family-name'
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
+                  id='signUpEmail'
+                  label='Email Address'
+                  name='email'
+                  value={state.email}
+                  autoComplete='email'
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  id="username"
-                  label="Username"
-                  name="username"
-                  autoComplete="username"
+                  id='signUpUsername'
+                  label='Username'
+                  name='username'
+                  value={state.username}
+                  autoComplete='username'
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
+                  name='password'
+                  label='Password'
+                  type='password'
+                  id='signUpPassword'
+                  value={state.password}
+                  autoComplete='new-password'
                 />
               </Grid>
             </Grid>
             <Button
-              type="submit"
+              type='submit'
               fullWidth
-              variant="contained"
+              variant='contained'
               sx={{ mt: 3, mb: 2 }}
             >
               Sign Up
