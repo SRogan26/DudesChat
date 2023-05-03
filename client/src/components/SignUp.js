@@ -18,8 +18,20 @@ import { ADD_USER } from '../utils/mutations';
 const theme = createTheme();
 
 export default function SignUp() {
-  const [state, setState] = useState({ firstName: '', lastName: '',  email: '', username: '', password: '' });
+  const [state, setState] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    username: '',
+    password: '',
+  });
+
   const [addUser, { error, data }] = useMutation(ADD_USER);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setState({ ...state, [name]: value });
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -62,12 +74,13 @@ export default function SignUp() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete='given-name'
-                  name='signUpFirstName'
+                  name='firstName'
                   required
                   fullWidth
-                  id='firstName'
+                  id='signUpFirstName'
                   label='First Name'
                   value={state.firstName}
+                  onChange={handleChange}
                   autoFocus
                 />
               </Grid>
@@ -79,6 +92,7 @@ export default function SignUp() {
                   label='Last Name'
                   name='lastName'
                   value={state.lastName}
+                  onChange={handleChange}
                   autoComplete='family-name'
                 />
               </Grid>
@@ -90,6 +104,7 @@ export default function SignUp() {
                   label='Email Address'
                   name='email'
                   value={state.email}
+                  onChange={handleChange}
                   autoComplete='email'
                 />
               </Grid>
@@ -101,6 +116,7 @@ export default function SignUp() {
                   label='Username'
                   name='username'
                   value={state.username}
+                  onChange={handleChange}
                   autoComplete='username'
                 />
               </Grid>
@@ -113,6 +129,7 @@ export default function SignUp() {
                   type='password'
                   id='signUpPassword'
                   value={state.password}
+                  onChange={handleChange}
                   autoComplete='new-password'
                 />
               </Grid>
