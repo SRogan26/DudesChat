@@ -1,16 +1,31 @@
-import * as React from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import jwt_decode from 'jwt-decode';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import jwt_decode from "jwt-decode";
+import { UseIsLoggedIn } from "../utils/authenticate";
 
 export default function Dashboard() {
-    const userToken = jwt_decode(localStorage.getItem("auth_token"));
-    const userName = userToken.data.username
+  const [userLogged, setUserLogged] = useState(UseIsLoggedIn());
+  const navTo = useNavigate();
+  useEffect(() => {
+    if (!userLogged) navTo("/");
+  }, [userLogged]);
+  const userToken = localStorage.getItem("auth_token");
+  let user;
+  if (userToken != "") user = jwt_decode(userToken);
+  const userName = user?.data?.username;
 
+  const handleLogOut = () => {
+    localStorage.setItem("auth_token", "");
+    setUserLogged(false);
+  };
   return (
     <Stack spacing={2} direction="row">
-      <Button variant="contained">{userName}</Button>
-      <Button variant="outlined">Log Out</Button>
+      <Button variant="contained">{userName || "Who?"}</Button>
+      <Button variant="outlined" onClick={handleLogOut}>
+        Log Out
+      </Button>
     </Stack>
   );
 }

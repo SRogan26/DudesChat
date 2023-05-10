@@ -15,7 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
 
-export default function Login() {
+export default function Login({setUserLogged}) {
   const [state, setState] = useState({ email: '', password: '' });
   const handleSubmit = (event) => {
     event.preventDefault();
