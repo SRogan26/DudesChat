@@ -43,7 +43,7 @@ export default function SignUp({setUserLogged}) {
         variables: { ...state },
       });
       //Will need to replace these lines with some user validation
-      UseLogIn(data);
+      UseLogIn(data.addUser.authToken);
       setUserLogged(true);
     } catch (err) {
       console.log(err);

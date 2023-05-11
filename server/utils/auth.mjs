@@ -6,7 +6,7 @@ const expiration = '1h';
 const authMiddleware = ({ req }) => {
     let authToken = req.body.token || req.query.token || req.headers.authorization;
 
-    console.log(authToken)
+    // console.log(authToken)
 
     if (req.headers.authorization) {
         authToken = authToken.split(' ').pop().trim();

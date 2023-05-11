@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql';
+import { GraphQLError } from "graphql";
 import { User } from "../models/index.js";
-import { signAuthToken } from '../utils/auth.mjs';
+import { signAuthToken } from "../utils/auth.mjs";
 
 // A map of functions which return data for the schema.
 export const resolvers = {
@@ -9,13 +9,13 @@ export const resolvers = {
       return await User.find({});
     },
     userByUsername: async (_, { username }, context) => {
-      console.log(context)
-      if (context.user){
-        return await User.findOne({username});
+      console.log(context);
+      if (context.user) {
+        return await User.findOne({ username });
       }
-      throw new GraphQLError('User is not authenticated', {
+      throw new GraphQLError("User is not authenticated", {
         extensions: {
-          code: 'UNAUTHENTICATED',
+          code: "UNAUTHENTICATED",
           http: { status: 401 },
         },
       });
@@ -23,19 +23,37 @@ export const resolvers = {
   },
   Mutation: {
     addUser: async (_, { username, email, password, firstName, lastName }) => {
-      const newUser = await User.create({
+      const user = await User.create({
         username,
         email,
         password,
         firstName,
         lastName,
       });
-      const authToken = signAuthToken(newUser);
+      const authToken = signAuthToken(user);
 
-      console.log(newUser);
+      console.log(user);
       console.log(authToken);
 
-      return { authToken, newUser };
+      return { authToken, user };
+    },
+    userLogIn: async (_, { email, password }, context) => {
+      const logInError = new GraphQLError("Incorrect Email/Password Provided", {
+        extensions: {
+          code: "UNAUTHENTICATED",
+          http: { status: 401 },
+        },
+      })
+
+      const user = await User.findOne({ email });
+      console.log(user);
+      if (!user) throw logInError
+      const isPassMatching = await user.validatePassword(password)
+      if (!isPassMatching) throw logInError
+
+      const authToken = signAuthToken(user);
+
+      return { authToken, user };
     },
   },
 };
