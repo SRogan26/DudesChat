@@ -11,7 +11,7 @@ export const typeDefs = `#graphql
 
   type Auth {
     authToken: ID
-    newUser: User
+    user: User
   }
 
   type Query {
@@ -21,5 +21,6 @@ export const typeDefs = `#graphql
 
   type Mutation {
     addUser(username: String!, email: String!, password: String!, firstName: String, lastName: String) : Auth
+    userLogIn(email: String!, password: String!) : Auth
   }
 `;

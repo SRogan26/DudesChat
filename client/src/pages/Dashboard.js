@@ -13,7 +13,7 @@ export default function Dashboard() {
   }, [userLogged]);
   const userToken = localStorage.getItem('auth_token');
   let user;
-  if (userToken != '') user = jwt_decode(userToken);
+  if (userToken) user = jwt_decode(userToken);
   const userName = user?.data?.username;
 
   const handleLogOut = () => {

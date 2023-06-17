@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 
-export const UseLogIn = (data) => {
-  const token = data.addUser.authToken;
-  localStorage.setItem('auth_token', token);
+export const UseLogIn = (token) => {
+  localStorage.setItem("auth_token", token);
 };
 
 export const UseIsLoggedIn = () => {
-  console.log(localStorage.getItem('auth_token'));
-  const wasLogged = localStorage.getItem('auth_token') != '' ? true : false;
+  console.log(localStorage.getItem("auth_token"));
+  const wasLogged = localStorage.getItem("auth_token") ? true : false;
   const [isLoggedIn, setIsLoggedIn] = useState(wasLogged);
 
   useEffect(() => {

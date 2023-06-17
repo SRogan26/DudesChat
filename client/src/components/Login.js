@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,18 +12,39 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useMutation } from '@apollo/client';
+import { USER_LOGIN } from '../utils/mutations';
+import { UseIsLoggedIn, UseLogIn } from "../utils/authenticate";
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
 export default function Login({setUserLogged}) {
   const [state, setState] = useState({ email: '', password: '' });
-  const handleSubmit = (event) => {
+  const [loginError, setLoginError] = useState(false)
+  
+  const [userLogin, { error, data }] = useMutation(USER_LOGIN);
+
+  const handleChange = (event) => {
+    if(loginError) setLoginError(false)
+    const { name, value } = event.target;
+    setState({ ...state, [name]: value });
+  };
+
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    try {
+      const { data } = await userLogin({
+        variables: { ...state },
+      });
+      //Will need to replace these lines with some user validation
+      UseLogIn(data.userLogIn.authToken);
+      setUserLogged(true);
+    } catch (err) {
+      console.log(err)
+      setLoginError(true);
+    }
   };
 
   return (
@@ -54,6 +75,9 @@ export default function Login({setUserLogged}) {
               name="email"
               autoComplete="email"
               autoFocus
+              value={state.email}
+              onChange={handleChange}
+              error={loginError}
             />
             <TextField
               margin="normal"
@@ -64,6 +88,10 @@ export default function Login({setUserLogged}) {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={state.password}
+              onChange={handleChange}
+              error={loginError}
+              helperText={loginError ? 'Incorrect Email or Password' : ''}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

@@ -40,7 +40,9 @@ export default function SignUp() {
       const { data } = await addUser({
         variables: { ...state },
       });
-      console.log(data);
+      //Will need to replace these lines with some user validation
+      UseLogIn(data.addUser.authToken);
+      setUserLogged(true);
     } catch (err) {
       console.log(err);
     }
