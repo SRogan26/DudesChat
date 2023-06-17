@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,13 +14,10 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../utils/mutations';
-import { UseIsLoggedIn, UseLogIn } from "../utils/authenticate";
-import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
-export default function SignUp({setUserLogged}) {
-  
+export default function SignUp() {
   const [state, setState] = useState({
     firstName: '',
     lastName: '',
@@ -39,12 +36,11 @@ export default function SignUp({setUserLogged}) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      console.log(state);
       const { data } = await addUser({
         variables: { ...state },
       });
-      //Will need to replace these lines with some user validation
-      UseLogIn(data);
-      setUserLogged(true);
+      console.log(data);
     } catch (err) {
       console.log(err);
     }
