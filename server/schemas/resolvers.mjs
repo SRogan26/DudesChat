@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { User } from "../models/index.js";
+import { User, Thread } from "../models/index.js";
 import { signAuthToken } from "../utils/auth.mjs";
 
 // A map of functions which return data for the schema.
