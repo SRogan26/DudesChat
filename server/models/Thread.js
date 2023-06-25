@@ -1,20 +1,5 @@
 const { model, Schema } = require("mongoose");
 
-const messageSchema = new Schema(
-  {
-    body: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    authorId: {
-      type: String,
-      required: true,
-    },
-  },
-  {timestamps : true}
-);
-
 const threadSchema = new Schema(
   {
     title: {
@@ -25,15 +10,20 @@ const threadSchema = new Schema(
       trim: true,
     },
     creatorId: {
-      type: String,
-      required: true,
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
-    memberIds: {
-      type: [String],
-      required: true,
-    },
-    messages: {
-      type: [messageSchema],
+    memberIds: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
+    messages: [{
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    }],
+    isDM: {
+      type: Boolean,
+      required: true
     },
   },
   {timestamps : true}

@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { User, Thread } from "../models/index.js";
+import { User, Thread, Message } from "../models/index.js";
 import { signAuthToken } from "../utils/auth.mjs";
 
 // A map of functions which return data for the schema.
@@ -9,7 +9,7 @@ export const resolvers = {
       return await User.find({});
     },
     userByUsername: async (_, { username }, context) => {
-      console.log(context);
+      // console.log(context.user);
       if (context.user) {
         return await User.findOne({ username });
       }
@@ -43,17 +43,52 @@ export const resolvers = {
           code: "UNAUTHENTICATED",
           http: { status: 401 },
         },
-      })
+      });
 
       const user = await User.findOne({ email });
       console.log(user);
-      if (!user) throw logInError
-      const isPassMatching = await user.validatePassword(password)
-      if (!isPassMatching) throw logInError
+      if (!user) throw logInError;
+      const isPassMatching = await user.validatePassword(password);
+      if (!isPassMatching) throw logInError;
 
       const authToken = signAuthToken(user);
 
       return { authToken, user };
+    },
+    addMessage: async (_, { messageBody, threadId }, context) => {
+      if (!context.user) {
+        throw new GraphQLError("User is not authenticated", {
+          extensions: {
+            code: "UNAUTHENTICATED",
+            http: { status: 401 },
+          },
+        });
+      }
+      const message = await Message.create({
+        messageBody,
+        authorId: context.user._id,
+        threadId,
+      });
+      const parsedMessage = message.toJSON()
+      return { ...parsedMessage };
+    },
+    addThread: async (_, { title, memberIds, isDM }, context) => {
+      if (!context.user) {
+        throw new GraphQLError("User is not authenticated", {
+          extensions: {
+            code: "UNAUTHENTICATED",
+            http: { status: 401 },
+          },
+        });
+      }
+      const thread = await Thread.create({
+        title,
+        creatorId: context.user._id,
+        memberIds,
+        isDM,
+      });
+      const parsedThread = thread.toJSON();
+      return { ...parsedThread };
     },
   },
 };
