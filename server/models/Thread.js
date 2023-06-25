@@ -15,8 +15,6 @@ const messageSchema = new Schema(
   {timestamps : true}
 );
 
-messageSchema.set('timestamps', true)
-
 const threadSchema = new Schema(
   {
     title: {
