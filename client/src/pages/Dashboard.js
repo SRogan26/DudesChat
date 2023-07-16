@@ -105,7 +105,7 @@ export default function Dashboard() {
   const userName = user?.data?.username;
 
   const handleLogOut = () => {
-    localStorage.setItem("auth_token", "");
+    localStorage.removeItem("auth_token");
     setUserLogged(false);
   };
 

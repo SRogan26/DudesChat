@@ -6,7 +6,6 @@ export const UseLogIn = (token) => {
 };
 
 export const UseIsLoggedIn = () => {
-  console.log(localStorage.getItem("auth_token"));
   const wasLogged = localStorage.getItem("auth_token") ? true : false;
   const [isLoggedIn, setIsLoggedIn] = useState(wasLogged);
 
@@ -14,9 +13,11 @@ export const UseIsLoggedIn = () => {
     const userToken = localStorage.getItem("auth_token");
     if (userToken) {
       const user = jwt_decode(userToken);
-      if (user.exp > Date.now() && wasLogged) {
+      const convertedNow = Date.now() / 1000;
+      if (user.exp < convertedNow && wasLogged) {
         setIsLoggedIn(false);
-        localStorage.setItem("auth_token", null);
+        localStorage.removeItem("auth_token");
+        console.log('it nuked it')
       }
     } else if (wasLogged && isLoggedIn) setIsLoggedIn(false);
   }, []);
