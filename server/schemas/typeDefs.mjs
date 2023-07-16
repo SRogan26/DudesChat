@@ -13,22 +13,23 @@ export const typeDefs = `#graphql
     authToken: ID
     user: User
   }
+  
+  scalar Date
 
   type Message {
     _id: ID
     messageBody: String
     authorId: ID
     threadId: ID
+    createdAt: Date
+    updatedAt: Date
   }
-
-  scalar Date
 
   type Thread {
     _id: ID
     title: String
     creatorId: ID
     memberIds: [ID]
-    messages: [ID]
     isDM: Boolean
     createdAt: Date
     updatedAt: Date
@@ -37,6 +38,8 @@ export const typeDefs = `#graphql
   type Query {
     users: [User]
     userByUsername(username: String!) : User
+    threadsByUser : [Thread]
+    messagesByThread(threadId: String!) : [Message]
   }
 
   type Mutation {

@@ -20,6 +20,32 @@ export const resolvers = {
         },
       });
     },
+    threadsByUser: async (_, {}, context) => {
+      if (!context.user) {
+        throw new GraphQLError("User is not authenticated", {
+          extensions: {
+            code: "UNAUTHENTICATED",
+            http: { status: 401 },
+          },
+        });
+      }
+      const threadsList = await Thread.find({memberIds: context.user._id})
+      
+      return threadsList;
+    },
+    messagesByThread: async (_,{threadId}, context) => {
+      if (!context.user) {
+        throw new GraphQLError("User is not authenticated", {
+          extensions: {
+            code: "UNAUTHENTICATED",
+            http: { status: 401 },
+          },
+        });
+      }
+      const messageList = Message.find({threadId})
+
+      return messageList
+    }
   },
   Mutation: {
     addUser: async (_, { username, email, password, firstName, lastName }) => {
@@ -81,6 +107,8 @@ export const resolvers = {
           },
         });
       }
+memberIds.unshift(context.user._id);
+
       const thread = await Thread.create({
         title,
         creatorId: context.user._id,
