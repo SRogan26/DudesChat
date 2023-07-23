@@ -25,6 +25,7 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
+import Threads from "../components/Dashboard/Threads";
 
 const drawerWidth = 240;
 
@@ -95,13 +96,22 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Dashboard() {
   const [userLogged, setUserLogged] = useState(UseIsLoggedIn());
+  // const [threadsList, setThreadsList] = useState([]);
+  const [messagesList, setMessagesList] = useState([]);
+
   const navTo = useNavigate();
+  // TEMPORARY FUNCTIONALITY
   useEffect(() => {
     if (!userLogged) navTo("/");
   }, [userLogged]);
+
   const userToken = localStorage.getItem("auth_token");
+
+
   let user;
-  if (userToken) user = jwt_decode(userToken);
+  if (userToken) {
+    user = jwt_decode(userToken);
+  }
   const userName = user?.data?.username;
 
   const handleLogOut = () => {
@@ -161,61 +171,15 @@ export default function Dashboard() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        {/* Begin top Threads Section */}
+        <Threads open={open}/>
+        {/* Begin bottom threads */}
+        
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <List
-          sx={{ width: "100%", bgcolor: "background.paper" }}
-        >
+        {/* Begin Messages Area */}
+        <List sx={{ width: "100%", bgcolor: "background.paper" }}>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
               <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
@@ -238,50 +202,8 @@ export default function Dashboard() {
             />
           </ListItem>
           <Divider variant="inset" component="li" />
-          <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-            </ListItemAvatar>
-            <ListItemText
-              primary="Summer BBQ"
-              secondary={
-                <>
-                  <Typography
-                    sx={{ display: "inline" }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    to Scott, Alex, Jennifer
-                  </Typography>
-                  {" — Wish I could come, but I'm out of town this…"}
-                </>
-              }
-            />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-            </ListItemAvatar>
-            <ListItemText
-              primary="Oui Oui"
-              secondary={
-                <>
-                  <Typography
-                    sx={{ display: "inline" }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    Sandra Adams
-                  </Typography>
-                  {" — Do you have Paris recommendations? Have you ever…"}
-                </>
-              }
-            />
-          </ListItem>
         </List>
+        {/* End Messages Area */}
       </Box>
     </Box>
   );
