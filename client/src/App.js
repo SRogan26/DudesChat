@@ -5,7 +5,6 @@ import {
   createHttpLink,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { onError } from "@apollo/client/link/error";
 import { Token } from "graphql";
 import { UserProvider } from "./utils/userContext";
 import PageRouter from "./pages/PageRouter";
@@ -21,19 +20,6 @@ const authLink = setContext((_, { headers }) => {
       authorization: authToken ? `Bearer ${authToken}` : "",
     },
   };
-});
-
-const resetToken = onError(({ networkError }) => {
-  console.log(networkError)
-  if (
-    networkError &&
-    networkError.name === "ApolloError" &&
-    networkError.statusCode === 401
-  ) {
-    console.log('It did the thing')
-    localStorage.removeItem("auth_token");
-    window.location.reload()
-  }
 });
 
 const client = new ApolloClient({
