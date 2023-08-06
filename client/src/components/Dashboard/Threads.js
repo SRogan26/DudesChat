@@ -8,7 +8,12 @@ import Avatar from "@mui/material/Avatar";
 import { GET_THREADS } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
 
-export default function Threads({open}) {
+export default function Threads({ open, setActiveThread }) {
+  const handleSelect = (e) => {
+    console.log(e.target.closest("li").id);
+    setActiveThread(e.target.closest("li").id);
+  };
+
   const { loading, error, data } = useQuery(GET_THREADS);
   if (loading) {
     console.log("loading");
@@ -18,59 +23,81 @@ export default function Threads({open}) {
     console.log(error);
     return;
   }
-  
+
   return (
     <>
       <List>
-        {data.threadsByUser.filter(thread => thread.isDM).map((thread) => (
-          <ListItem key={thread._id} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+        {data.threadsByUser
+          .filter((thread) => thread.isDM)
+          .map((thread) => (
+            <ListItem
+              key={thread._id}
+              id={thread._id}
+              onClick={handleSelect}
+              disablePadding
+              sx={{ display: "block" }}
             >
-              <ListItemAvatar
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
               >
-                <Avatar alt={thread.title} src={null}/>
-              </ListItemAvatar>
-              <ListItemText primary={thread.title} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+                <ListItemAvatar
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Avatar alt={thread.title} src={thread.title} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={thread.title}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
       </List>
       {/* End Top Threads section */}
       <Divider />
       {/* Begin bottom threads */}
       <List>
-        {data.threadsByUser.filter(thread => !thread.isDM).map((thread) => (
-          <ListItem key={thread._id} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+        {data.threadsByUser
+          .filter((thread) => !thread.isDM)
+          .map((thread) => (
+            <ListItem
+              key={thread._id}
+              id={thread._id}
+              onClick={handleSelect}
+              disablePadding
+              sx={{ display: "block" }}
             >
-              <ListItemAvatar
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
               >
-                <Avatar alt={thread.title} src={null}/>
-              </ListItemAvatar>
-              <ListItemText primary={thread.title} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+                <ListItemAvatar
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Avatar alt={thread.title} src={thread.title} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={thread.title}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
       </List>
       {/* End Bottom Threads section */}
     </>

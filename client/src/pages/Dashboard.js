@@ -9,7 +9,6 @@ import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -17,15 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
 import Threads from "../components/Dashboard/Threads";
+import Messages from "../components/Dashboard/Messages";
 
 const drawerWidth = 240;
 
@@ -96,8 +88,8 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Dashboard() {
   const [userLogged, setUserLogged] = useState(UseIsLoggedIn());
-  // const [threadsList, setThreadsList] = useState([]);
-  const [messagesList, setMessagesList] = useState([]);
+  const [activeThread, setActiveThread] = useState("");
+  // const [messagesList, setMessagesList] = useState([]);
 
   const navTo = useNavigate();
   // TEMPORARY FUNCTIONALITY
@@ -106,7 +98,6 @@ export default function Dashboard() {
   }, [userLogged]);
 
   const userToken = localStorage.getItem("auth_token");
-
 
   let user;
   if (userToken) {
@@ -172,37 +163,13 @@ export default function Dashboard() {
         </DrawerHeader>
         <Divider />
         {/* Begin top Threads Section */}
-        <Threads open={open}/>
+        <Threads open={open} setActiveThread={setActiveThread} />
         {/* Begin bottom threads */}
-        
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {/* Begin Messages Area */}
-        <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-          <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-            </ListItemAvatar>
-            <ListItemText
-              primary="Brunch this weekend?"
-              secondary={
-                <>
-                  <Typography
-                    sx={{ display: "inline" }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    Ali Connors
-                  </Typography>
-                  {" — I'll be in your neighborhood doing errands this…"}
-                </>
-              }
-            />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-        </List>
+        {activeThread && <Messages activeThread={activeThread} />}
         {/* End Messages Area */}
       </Box>
     </Box>
