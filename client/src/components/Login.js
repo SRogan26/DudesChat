@@ -14,14 +14,15 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useMutation } from '@apollo/client';
 import { USER_LOGIN } from '../utils/mutations';
-import { UseIsLoggedIn, UseLogIn } from "../utils/authenticate";
-import { useNavigate } from 'react-router-dom';
+import { UseLogIn } from "../utils/authenticate";
+import { useUserContext } from '../utils/userContext';
 
 const theme = createTheme();
 
-export default function Login({setUserLogged}) {
+export default function Login() {
   const [state, setState] = useState({ email: '', password: '' });
   const [loginError, setLoginError] = useState(false)
+  const {setUserLogged} = useUserContext()
   
   const [userLogin, { error, data }] = useMutation(USER_LOGIN);
 
