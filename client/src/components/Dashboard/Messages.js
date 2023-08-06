@@ -7,8 +7,11 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { GET_MESSAGES } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
+import { Navigate } from "react-router-dom";
+import { useUserContext } from "../../utils/userContext";
 
 export default function Messages({ activeThread }) {
+  const {setUserLogged} = useUserContext()
 
   const { loading, error, data } = useQuery(GET_MESSAGES, {
     variables: { threadId: activeThread },
@@ -18,8 +21,12 @@ export default function Messages({ activeThread }) {
     return;
   }
   if (error) {
+    if(error.message === "User is not authenticated") {
+      localStorage.removeItem("auth_token")
+      return <Navigate to='/'/>;
+    }
     console.log(error);
-    return <div>{"PICK A CHAT THREAD ON THE LEFT"}</div>;
+    return;
   }
 
   return (

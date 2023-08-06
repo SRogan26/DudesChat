@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -87,8 +87,14 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Dashboard() {
   const [activeThread, setActiveThread] = useState("");
-  const {setUserLogged} = useUserContext();
+  const {userLogged, setUserLogged} = useUserContext();
   // const [messagesList, setMessagesList] = useState([]);
+  
+  useEffect(() => {
+    if(!localStorage.getItem('auth_token') && userLogged) {
+      console.log('firing laser')
+      setUserLogged(false)};
+  })
 
   const userToken = localStorage.getItem("auth_token");
 

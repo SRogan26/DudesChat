@@ -7,8 +7,10 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import { GET_THREADS } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
+import { Navigate } from "react-router-dom";
 
 export default function Threads({ open, setActiveThread }) {
+
   const handleSelect = (e) => {
     console.log(e.target.closest("li").id);
     setActiveThread(e.target.closest("li").id);
@@ -20,6 +22,10 @@ export default function Threads({ open, setActiveThread }) {
     return;
   }
   if (error) {
+    if(error.message === "User is not authenticated") {
+      localStorage.removeItem("auth_token")
+      return <Navigate to='/byebye'/>;
+    }
     console.log(error);
     return;
   }
