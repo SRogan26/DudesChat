@@ -1,12 +1,12 @@
 import Grid from '@mui/material/Grid';
 import Login from "../components/Login"
 import SignUp from "../components/SignUp"
-import { useState, useEffect } from 'react';
-import { UseIsLoggedIn } from "../utils/authenticate";
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../utils/userContext';
 
 export default function LoginSignUp () {
-    const [userLogged, setUserLogged] = useState(UseIsLoggedIn())
+    const {userLogged} = useUserContext();
     
   const navTo = useNavigate()
   useEffect(()=>{
@@ -19,13 +19,13 @@ export default function LoginSignUp () {
     return (
         <Grid container style={styles}>
             <Grid item xs={12} md={5}>
-            <Login setUserLogged={setUserLogged}/>
+            <Login />
             </Grid>
             <Grid item xs={12} md={2} textAlign='center'>
             OR
             </Grid>
             <Grid item xs={12} md={5}>
-            <SignUp setUserLogged={setUserLogged}/>
+            <SignUp />
             </Grid>
         </Grid>
     )

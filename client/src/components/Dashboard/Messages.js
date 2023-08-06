@@ -27,8 +27,8 @@ export default function Messages({ activeThread }) {
       {/* Begin Messages Area */}
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
         {data.messagesByThread.map((message) => (
-          <>
-            <ListItem key={message._id} alignItems="flex-start">
+          <div key={message._id}>
+            <ListItem alignItems="flex-start">
               <ListItemAvatar>
                 <Avatar alt={message.authorId} src={message.authorId} />
               </ListItemAvatar>
@@ -49,7 +49,7 @@ export default function Messages({ activeThread }) {
               />
             </ListItem>
             <Divider variant="inset" component="li" />
-          </>
+          </div>
         ))}
       </List>
       {/* End Messages Area */}

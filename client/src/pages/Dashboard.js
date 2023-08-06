@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import jwt_decode from "jwt-decode";
-import { UseIsLoggedIn } from "../utils/authenticate";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { styled, useTheme } from "@mui/material/styles";
@@ -18,6 +16,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Threads from "../components/Dashboard/Threads";
 import Messages from "../components/Dashboard/Messages";
+import { useUserContext } from '../utils/userContext';
 
 const drawerWidth = 240;
 
@@ -87,15 +86,9 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Dashboard() {
-  const [userLogged, setUserLogged] = useState(UseIsLoggedIn());
   const [activeThread, setActiveThread] = useState("");
+  const {setUserLogged} = useUserContext();
   // const [messagesList, setMessagesList] = useState([]);
-
-  const navTo = useNavigate();
-  // TEMPORARY FUNCTIONALITY
-  useEffect(() => {
-    if (!userLogged) navTo("/");
-  }, [userLogged]);
 
   const userToken = localStorage.getItem("auth_token");
 
