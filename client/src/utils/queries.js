@@ -17,12 +17,14 @@ export const GET_THREADS = gql`
 export const GET_MESSAGES = gql`
   query Query($threadId: String!) {
     messagesByThread(threadId: $threadId) {
-      _id
-      authorId
-      createdAt
-      messageBody
-      threadId
       updatedAt
+      threadId
+      messageBody
+      createdAt
+      authorId {
+        username
+      }
+      _id
     }
   }
 `;

@@ -7,11 +7,18 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { GET_MESSAGES } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
-import { Navigate } from "react-router-dom";
 import { useUserContext } from "../../utils/userContext";
+import { useEffect } from "react";
 
 export default function Messages({ activeThread }) {
   const {setUserLogged} = useUserContext()
+
+  useEffect(()=>{
+    if(!localStorage.getItem("auth_token")){
+      console.log("begone from this place fiend")
+      setUserLogged(false)
+    }
+  })
 
   const { loading, error, data } = useQuery(GET_MESSAGES, {
     variables: { threadId: activeThread },
@@ -23,24 +30,21 @@ export default function Messages({ activeThread }) {
   if (error) {
     if(error.message === "User is not authenticated") {
       localStorage.removeItem("auth_token")
-      return <Navigate to='/'/>;
     }
     console.log(error);
     return;
   }
-
-  return (
-    <>
-      {/* Begin Messages Area */}
+  if (data.messagesByThread.length === 0) return (<div key='None'>No Messages in This Thread</div>)
+  else {return (
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
         {data.messagesByThread.map((message) => (
           <div key={message._id}>
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
-                <Avatar alt={message.authorId} src={message.authorId} />
+                <Avatar alt={message.authorId.username} src={message.authorId.username} />
               </ListItemAvatar>
               <ListItemText
-                primary={"Dude-" + message.authorId + " @ " + message.updatedAt}
+                primary={message.authorId.username + " @ " + message.updatedAt}
                 secondary={
                   <>
                     <Typography
@@ -58,8 +62,7 @@ export default function Messages({ activeThread }) {
             <Divider variant="inset" component="li" />
           </div>
         ))}
-      </List>
       {/* End Messages Area */}
-    </>
-  );
+      </List>
+  )}
 }

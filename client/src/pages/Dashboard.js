@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import jwt_decode from "jwt-decode";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { styled, useTheme } from "@mui/material/styles";
@@ -87,22 +86,16 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Dashboard() {
   const [activeThread, setActiveThread] = useState("");
-  const {userLogged, setUserLogged} = useUserContext();
+  const {userLogged, setUserLogged, currentUser} = useUserContext();
   // const [messagesList, setMessagesList] = useState([]);
   
   useEffect(() => {
-    if(!localStorage.getItem('auth_token') && userLogged) {
+    if(!localStorage.getItem('auth_token') && userLogged || !currentUser) {
       console.log('firing laser')
       setUserLogged(false)};
   })
 
-  const userToken = localStorage.getItem("auth_token");
-
-  let user;
-  if (userToken) {
-    user = jwt_decode(userToken);
-  }
-  const userName = user?.data?.username;
+  const userName = currentUser?.username;
 
   const handleLogOut = () => {
     localStorage.removeItem("auth_token");
@@ -168,7 +161,7 @@ export default function Dashboard() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {/* Begin Messages Area */}
-        {activeThread && <Messages activeThread={activeThread} />}
+        {activeThread && userLogged && <Messages activeThread={activeThread} />}
         {/* End Messages Area */}
       </Box>
     </Box>
