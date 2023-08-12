@@ -131,7 +131,7 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+            Welcome to DudesChat
           </Typography>
           {/* vv User and Logout buttons vv */}
           <Stack spacing={2} direction="row">

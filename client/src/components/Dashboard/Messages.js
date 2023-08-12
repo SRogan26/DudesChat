@@ -9,6 +9,8 @@ import { GET_MESSAGES } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
 import { useUserContext } from "../../utils/userContext";
 import { useEffect } from "react";
+import stringAvatar from "../../utils/avatarStyle";
+
 
 export default function Messages({ activeThread }) {
   const {setUserLogged} = useUserContext()
@@ -41,21 +43,19 @@ export default function Messages({ activeThread }) {
           <div key={message._id}>
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
-                <Avatar alt={message.authorId.username} src={message.authorId.username} />
+                <Avatar {...stringAvatar(message.authorId.username)} />
               </ListItemAvatar>
               <ListItemText
                 primary={message.authorId.username + " @ " + message.updatedAt}
                 secondary={
-                  <>
                     <Typography
                       sx={{ display: "inline" }}
                       component="span"
-                      variant="body2"
+                      variant="body1"
                       color="text.primary"
                     >
                       {message.messageBody}
                     </Typography>
-                  </>
                 }
               />
             </ListItem>

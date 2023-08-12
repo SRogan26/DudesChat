@@ -8,6 +8,7 @@ import Avatar from "@mui/material/Avatar";
 import { GET_THREADS } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
 import { Navigate } from "react-router-dom";
+import stringAvatar from "../../utils/avatarStyle";
 
 export default function Threads({ open, setActiveThread }) {
 
@@ -57,7 +58,7 @@ export default function Threads({ open, setActiveThread }) {
                     justifyContent: "center",
                   }}
                 >
-                  <Avatar alt={thread.title} src={thread.title} />
+                  <Avatar {...stringAvatar(thread.title)} />
                 </ListItemAvatar>
                 <ListItemText
                   primary={thread.title}
@@ -95,7 +96,7 @@ export default function Threads({ open, setActiveThread }) {
                     justifyContent: "center",
                   }}
                 >
-                  <Avatar alt={thread.title} src={thread.title} />
+                  <Avatar {...stringAvatar(thread.title)} />
                 </ListItemAvatar>
                 <ListItemText
                   primary={thread.title}
