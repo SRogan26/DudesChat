@@ -15,7 +15,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Threads from "../components/Dashboard/Threads";
 import Messages from "../components/Dashboard/Messages";
-import { useUserContext } from '../utils/userContext';
+import AddMessage from "../components/Dashboard/AddMessage";
+import { useUserContext } from "../utils/userContext";
 
 const drawerWidth = 240;
 
@@ -86,14 +87,15 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Dashboard() {
   const [activeThread, setActiveThread] = useState("");
-  const {userLogged, setUserLogged, currentUser} = useUserContext();
+  const { userLogged, setUserLogged, currentUser } = useUserContext();
   // const [messagesList, setMessagesList] = useState([]);
-  
+
   useEffect(() => {
-    if(!localStorage.getItem('auth_token') && userLogged || !currentUser) {
-      console.log('firing laser')
-      setUserLogged(false)};
-  })
+    if ((!localStorage.getItem("auth_token") && userLogged) || !currentUser) {
+      console.log("firing laser");
+      setUserLogged(false);
+    }
+  });
 
   const userName = currentUser?.username;
 
@@ -114,7 +116,7 @@ export default function Dashboard() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -158,10 +160,27 @@ export default function Dashboard() {
         <Threads open={open} setActiveThread={setActiveThread} />
         {/* Begin bottom threads */}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        {/* Begin Messages Area */}
-        {activeThread && userLogged && <Messages activeThread={activeThread} />}
+      <Box
+        component="main"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          p: 3,
+          minHeight: "100%",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <DrawerHeader />
+          {/* Begin Messages Area */}
+          {activeThread && userLogged && (
+            <Messages activeThread={activeThread} />
+          )}
+        </div>
+        {activeThread && userLogged && (
+          <AddMessage activeThread={activeThread} />
+        )}
         {/* End Messages Area */}
       </Box>
     </Box>
