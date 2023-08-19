@@ -46,7 +46,7 @@ export default function Messages({ activeThread }) {
                 <Avatar {...stringAvatar(message.authorId.username)} />
               </ListItemAvatar>
               <ListItemText
-                primary={message.authorId.username + " @ " + message.updatedAt}
+                primary={message.authorId.username + " @ " + new Date(message.updatedAt).toLocaleString()}
                 secondary={
                     <Typography
                       sx={{ display: "inline" }}

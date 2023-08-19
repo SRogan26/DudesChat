@@ -1,6 +1,9 @@
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import express from "express";
 import http from "http";
 import cors from "cors";
@@ -12,11 +15,37 @@ const PORT = process.env.PORT || 4000;
 const app = express();
 const httpServer = http.createServer(app);
 
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+// Creating the WebSocket server
+const wsServer = new WebSocketServer({
+  // This is the `httpServer` we created in a previous step.
+  server: httpServer,
+  // Pass a different path here if app.use
+  // serves expressMiddleware at a different path
+  path: '/subscriptions',
+});
+
+// Hand in the schema we just created and have the
+// WebSocketServer start listening.
+const serverCleanup = useServer({ schema }, wsServer);
+
 // Set up Apollo Server
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  schema,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+        // Proper shutdown for the WebSocket server.
+        {
+          async serverWillStart() {
+            return {
+              async drainServer() {
+                await serverCleanup.dispose();
+              },
+            };
+          },
+        },
+  ],
 });
 
 await server.start();
