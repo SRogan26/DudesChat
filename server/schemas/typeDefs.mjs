@@ -19,7 +19,7 @@ export const typeDefs = `#graphql
   type Message {
     _id: ID
     messageBody: String
-    authorId: ID
+    authorId: User
     threadId: ID
     createdAt: Date
     updatedAt: Date

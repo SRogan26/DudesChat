@@ -25,3 +25,11 @@ export const USER_LOGIN = gql`
     }
   }
 `;
+
+export const POST_MESSAGE = gql`
+  mutation Mutation($messageBody: String!, $threadId: ID!) {
+    addMessage(messageBody: $messageBody, threadId: $threadId) {
+      createdAt
+    }
+  }
+`

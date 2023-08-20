@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Tooltip from '@mui/material/Tooltip';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../utils/mutations';
@@ -75,6 +76,7 @@ export default function SignUp() {
           >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
+                <Tooltip title='Enter your first name' placement='top-start'>
                 <TextField
                   autoComplete='given-name'
                   name='firstName'
@@ -86,8 +88,10 @@ export default function SignUp() {
                   onChange={handleChange}
                   autoFocus
                 />
+                </Tooltip>
               </Grid>
               <Grid item xs={12} sm={6}>
+              <Tooltip title='Enter your last name' placement='top-end'>
                 <TextField
                   required
                   fullWidth
@@ -98,8 +102,10 @@ export default function SignUp() {
                   onChange={handleChange}
                   autoComplete='family-name'
                 />
+                </Tooltip>
               </Grid>
               <Grid item xs={12}>
+                <Tooltip title='Enter your email address' placement='bottom'>
                 <TextField
                   required
                   fullWidth
@@ -110,6 +116,7 @@ export default function SignUp() {
                   onChange={handleChange}
                   autoComplete='email'
                 />
+                </Tooltip>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -121,9 +128,20 @@ export default function SignUp() {
                   value={state.username}
                   onChange={handleChange}
                   autoComplete='username'
+                  error={state.username.length <= 6 && state.username.length > 0}
+                  helperText={state.username.length <= 6 && state.username.length >= 0 ? 
+                    'Username must have at least 6 characters' :
+                    'Username is long enough'
+                  }
+                  color={state.username.length <= 6 && state.username.length >= 0 ? 
+                    'primary' :
+                    'success'
+                  }
+                  focused
                 />
               </Grid>
               <Grid item xs={12}>
+              <Tooltip title='Enter your password (min 8 characters)' placement='bottom'>
                 <TextField
                   required
                   fullWidth
@@ -134,7 +152,18 @@ export default function SignUp() {
                   value={state.password}
                   onChange={handleChange}
                   autoComplete='new-password'
+                  error={state.password.length <= 8 && state.password.length > 0}
+                  helperText={state.password.length <= 8 && state.password.length >= 0 ? 
+                    'Password must have at least 8 characters' :
+                    'Password is long enough'
+                  }
+                  color={state.password.length <= 8 && state.password.length >= 0 ? 
+                    'primary' :
+                    'success'
+                  }
+                  focused
                 />
+                </ Tooltip>
               </Grid>
             </Grid>
             <Button

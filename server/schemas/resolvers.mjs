@@ -42,8 +42,8 @@ export const resolvers = {
           },
         });
       }
-      const messageList = Message.find({threadId})
-
+      const messageList = await Message.find({threadId}).populate('authorId').exec()
+      
       return messageList
     }
   },

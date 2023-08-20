@@ -5,12 +5,16 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
+import ListItemIcon from '@mui/material/ListItemIcon';
+import AddIcon from '@mui/icons-material/Add';
+import Tooltip from '@mui/material/Tooltip';
 import { GET_THREADS } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
+import stringAvatar from "../../utils/avatarStyle";
 
 export default function Threads({ open, setActiveThread }) {
+
   const handleSelect = (e) => {
-    console.log(e.target.closest("li").id);
     setActiveThread(e.target.closest("li").id);
   };
 
@@ -20,6 +24,9 @@ export default function Threads({ open, setActiveThread }) {
     return;
   }
   if (error) {
+    if(error.message === "User is not authenticated") {
+      localStorage.removeItem("auth_token")
+    }
     console.log(error);
     return;
   }
@@ -30,6 +37,7 @@ export default function Threads({ open, setActiveThread }) {
         {data.threadsByUser
           .filter((thread) => thread.isDM)
           .map((thread) => (
+            <Tooltip key={thread._id} title={open ? '' : thread.title} placement='right'>
             <ListItem
               key={thread._id}
               id={thread._id}
@@ -51,7 +59,7 @@ export default function Threads({ open, setActiveThread }) {
                     justifyContent: "center",
                   }}
                 >
-                  <Avatar alt={thread.title} src={thread.title} />
+                  <Avatar {...stringAvatar(thread.title)} />
                 </ListItemAvatar>
                 <ListItemText
                   primary={thread.title}
@@ -59,7 +67,37 @@ export default function Threads({ open, setActiveThread }) {
                 />
               </ListItemButton>
             </ListItem>
+            </Tooltip>
           ))}
+          <Tooltip title={open ? '' : 'New DudeMessage'} placement='right'>
+          <ListItem
+              key='new-dm-button'
+              disablePadding
+              sx={{ display: "block" }}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 40,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary='New DudeMessage'
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            </Tooltip>
       </List>
       {/* End Top Threads section */}
       <Divider />
@@ -68,8 +106,8 @@ export default function Threads({ open, setActiveThread }) {
         {data.threadsByUser
           .filter((thread) => !thread.isDM)
           .map((thread) => (
+            <Tooltip key={thread._id} title={open ? '' : thread.title} placement='right'>
             <ListItem
-              key={thread._id}
               id={thread._id}
               onClick={handleSelect}
               disablePadding
@@ -89,7 +127,7 @@ export default function Threads({ open, setActiveThread }) {
                     justifyContent: "center",
                   }}
                 >
-                  <Avatar alt={thread.title} src={thread.title} />
+                  <Avatar {...stringAvatar(thread.title)} />
                 </ListItemAvatar>
                 <ListItemText
                   primary={thread.title}
@@ -97,7 +135,37 @@ export default function Threads({ open, setActiveThread }) {
                 />
               </ListItemButton>
             </ListItem>
+            </Tooltip>
           ))}
+          <Tooltip title={open ? '' : 'New DudeGroup'} placement='right'>
+          <ListItem
+              key='new-group-button'
+              disablePadding
+              sx={{ display: "block" }}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 40,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary='New DudeGroup'
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            </Tooltip>
       </List>
       {/* End Bottom Threads section */}
     </>
