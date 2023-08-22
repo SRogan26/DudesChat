@@ -48,4 +48,8 @@ export const typeDefs = `#graphql
     addMessage(messageBody: String!, threadId: ID!) : Message
     addThread(title: String!, memberIds: [ID], isDM: Boolean!) : Thread
   }
+
+  type Subscription {
+    messagePosted(threadId: ID!) : Message
+  }
 `;
