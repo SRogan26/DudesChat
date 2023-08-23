@@ -24,7 +24,7 @@ export default function AddMessage({activeThread}) {
       console.log(data)
       setMessageBody('');
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
   };
   return (

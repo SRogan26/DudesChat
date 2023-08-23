@@ -107,6 +107,7 @@ export const resolvers = {
       subscribe: withFilter(
         () => pubsub.asyncIterator(["MESSAGE_POSTED"]),
         (payload, variables) => {
+          console.log(payload.messagePosted.threadId.toString(), variables.threadId)
           console.log(payload.messagePosted.threadId.toString() === variables.threadId)
           return payload.messagePosted.threadId.toString() === variables.threadId;
         }

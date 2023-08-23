@@ -14,7 +14,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Threads from "../components/Dashboard/Threads";
-import Messages from "../components/Dashboard/Messages";
+import MessagesWithData from "../components/Dashboard/Messages";
 import AddMessage from "../components/Dashboard/AddMessage";
 import { useUserContext } from "../utils/userContext";
 
@@ -175,7 +175,7 @@ export default function Dashboard() {
           <DrawerHeader />
           {/* Begin Messages Area */}
           {activeThread && userLogged && (
-            <Messages activeThread={activeThread} />
+            <MessagesWithData activeThread={activeThread} />
           )}
         </div>
         {activeThread && userLogged && (
