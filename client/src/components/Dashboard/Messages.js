@@ -13,9 +13,14 @@ import stringAvatar from "../../utils/avatarStyle";
 import { MESSAGE_POSTED } from "../../utils/subscriptions";
 
 function Messages({ data, subscribeToNewMessages, activeThread }) {
+
   const results = data.messagesByThread
+
+  
+
   useEffect(() => {
-    subscribeToNewMessages({
+    
+    const unsubscribe = subscribeToNewMessages({
       document: MESSAGE_POSTED,
       variables: { threadId: activeThread},
       updateQuery: (prev, { subscriptionData }) => {
@@ -26,7 +31,10 @@ function Messages({ data, subscribeToNewMessages, activeThread }) {
         })
       }
     })
-  }, [activeThread]);
+    
+    return () => unsubscribe()
+  }
+  , [activeThread]);
   
   
   return (
@@ -75,6 +83,9 @@ export default function MessagesWithData({ activeThread }) {
 
   const { subscribeToMore, loading, error, data } = useQuery(GET_MESSAGES, {
     variables: { threadId: activeThread },
+    options:{
+      fetchPolicy: 'network-only'
+    }
   });
   if (loading) {
     console.log("loading");
