@@ -92,10 +92,10 @@ export default function MessagesWithData({ activeThread }) {
     return;
   }
   if (error) {
-    if (error.message === "User is not authenticated") {
+    if (error.graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
       localStorage.removeItem("auth_token");
     }
-    console.log(error);
+    console.log({...error});
     return;
   }
 

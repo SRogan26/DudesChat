@@ -12,6 +12,11 @@ export const UserProvider = ({ children }) => {
   const user = userToken ? jwt_decode(userToken).data : null
   const [currentUser, setCurrentUser] = useState(user);
 
+  useEffect(()=>{
+    const userToken = localStorage.getItem("auth_token");
+    const user = userToken ? jwt_decode(userToken).data : null
+    setCurrentUser(user)
+  }, [])
 
   useEffect(() => {
     if (userToken) {

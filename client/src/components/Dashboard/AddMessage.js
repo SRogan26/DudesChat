@@ -24,6 +24,9 @@ export default function AddMessage({activeThread}) {
       console.log(data)
       setMessageBody('');
     } catch (err) {
+      if (error.graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+        localStorage.removeItem("auth_token");
+      }
       console.log(err)
     }
   };

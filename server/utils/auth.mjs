@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const secret = 'tempSecret';
-const expiration = 60*60;
+const expiration = 2;
 
 const authMiddleware = ({ req }) => {
     let authToken = req.body.token || req.query.token || req.headers.authorization;
