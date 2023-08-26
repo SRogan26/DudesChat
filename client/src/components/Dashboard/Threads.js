@@ -11,6 +11,8 @@ import Tooltip from "@mui/material/Tooltip";
 import { GET_THREADS } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
 import stringAvatar from "../../utils/avatarStyle";
+import DMForm from "./FormModal/DMForm";
+
 
 function Thread({ thread, open, setActiveThread }) {
   const handleSelect = (e) => {
@@ -49,13 +51,15 @@ function Thread({ thread, open, setActiveThread }) {
   );
 }
 
-function AddThread({ title, open }) {
+function AddThread({ title, open, handleModalOpen, FormComponent}) {
+
   return (
     <Tooltip title={open ? "" : `New ${title}`} placement="right">
       <ListItem
         key={`new-${title}-button`}
         disablePadding
         sx={{ display: "block" }}
+        onClick={() => handleModalOpen(FormComponent)}
       >
         <ListItemButton
           sx={{
@@ -83,8 +87,12 @@ function AddThread({ title, open }) {
   );
 }
 
-export default function Threads({ open, setActiveThread }) {
-  const { loading, error, data } = useQuery(GET_THREADS);
+export default function Threads({ open, setActiveThread, handleModalOpen }) {
+
+  const { loading, error, data } = useQuery(GET_THREADS, {
+    fetchPolicy: 'network-only',
+    pollInterval: 2000,
+  });
   if (loading) {
     console.log("loading");
     return;
@@ -96,7 +104,7 @@ export default function Threads({ open, setActiveThread }) {
     console.log(error);
     return;
   }
-
+ 
   return (
     <>
       <List>
@@ -110,7 +118,7 @@ export default function Threads({ open, setActiveThread }) {
               setActiveThread={setActiveThread}
             />
           ))}
-        <AddThread open={open} title="DudeMessage" />
+        <AddThread open={open} title="DudeMessage" handleModalOpen={handleModalOpen} FormComponent={DMForm}/>
       </List>
       {/* End Top Threads section */}
       <Divider />
@@ -126,7 +134,7 @@ export default function Threads({ open, setActiveThread }) {
               setActiveThread={setActiveThread}
             />
           ))}
-        <AddThread open={open} title="DudeGroup" />
+        <AddThread open={open} title="DudeGroup" handleModalOpen={handleModalOpen}/>
       </List>
       {/* End Bottom Threads section */}
     </>

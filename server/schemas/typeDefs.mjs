@@ -46,7 +46,7 @@ export const typeDefs = `#graphql
     addUser(username: String!, email: String!, password: String!, firstName: String, lastName: String) : Auth
     userLogIn(email: String!, password: String!) : Auth
     addMessage(messageBody: String!, threadId: ID!) : Message
-    addThread(title: String!, memberIds: [ID], isDM: Boolean!) : Thread
+    addThread(title: String!, memberNames: [String!], isDM: Boolean!) : Thread
   }
 
   type Subscription {

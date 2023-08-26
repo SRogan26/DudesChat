@@ -88,8 +88,15 @@ export const resolvers = {
 
       return { ...parsedMessage };
     },
-    addThread: async (_, { title, memberIds, isDM }, context) => {
+    addThread: async (_, { title, memberNames, isDM }, context) => {
       if (!context.user) throw unauthenticated;
+
+      const memberIds = [];
+      
+      for(let i=0; i < memberNames.length ; i++) {
+        const member = await User.findOne({username: memberNames[i]})
+        memberIds.push(member._id)
+      }
       memberIds.unshift(context.user._id);
 
       const thread = await Thread.create({
