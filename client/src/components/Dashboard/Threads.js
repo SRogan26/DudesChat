@@ -12,7 +12,7 @@ import { GET_THREADS } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
 import stringAvatar from "../../utils/avatarStyle";
 import DMForm from "./FormModal/DMForm";
-
+import { useEffect } from "react";
 
 function Thread({ thread, open, setActiveThread }) {
   const handleSelect = (e) => {
@@ -51,8 +51,7 @@ function Thread({ thread, open, setActiveThread }) {
   );
 }
 
-function AddThread({ title, open, handleModalOpen, FormComponent}) {
-
+function AddThread({ title, open, handleModalOpen, FormComponent }) {
   return (
     <Tooltip title={open ? "" : `New ${title}`} placement="right">
       <ListItem
@@ -88,23 +87,28 @@ function AddThread({ title, open, handleModalOpen, FormComponent}) {
 }
 
 export default function Threads({ open, setActiveThread, handleModalOpen }) {
+  useEffect(() => {
+    const pollingInt = setInterval(() => refetch(), 2000);
+    return (() => {
+      clearInterval(pollingInt);
+    });
+  }, []);
 
-  const { loading, error, data } = useQuery(GET_THREADS, {
-    fetchPolicy: 'network-only',
-    pollInterval: 2000,
+  const { loading, error, data, refetch } = useQuery(GET_THREADS, {
+    fetchPolicy: "network-only",
   });
   if (loading) {
     console.log("loading");
     return;
   }
   if (error) {
-    if (error.graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+    if (error.graphQLErrors[0].extensions.code === "UNAUTHENTICATED") {
       localStorage.removeItem("auth_token");
     }
     console.log(error);
     return;
   }
- 
+
   return (
     <>
       <List>
@@ -118,7 +122,12 @@ export default function Threads({ open, setActiveThread, handleModalOpen }) {
               setActiveThread={setActiveThread}
             />
           ))}
-        <AddThread open={open} title="DudeMessage" handleModalOpen={handleModalOpen} FormComponent={DMForm}/>
+        <AddThread
+          open={open}
+          title="DudeMessage"
+          handleModalOpen={handleModalOpen}
+          FormComponent={DMForm}
+        />
       </List>
       {/* End Top Threads section */}
       <Divider />
@@ -134,7 +143,11 @@ export default function Threads({ open, setActiveThread, handleModalOpen }) {
               setActiveThread={setActiveThread}
             />
           ))}
-        <AddThread open={open} title="DudeGroup" handleModalOpen={handleModalOpen}/>
+        <AddThread
+          open={open}
+          title="DudeGroup"
+          handleModalOpen={handleModalOpen}
+        />
       </List>
       {/* End Bottom Threads section */}
     </>

@@ -93,11 +93,13 @@ export const resolvers = {
 
       const memberIds = [];
       
-      for(let i=0; i < memberNames.length ; i++) {
-        const member = await User.findOne({username: memberNames[i]})
-        memberIds.push(member._id)
+      const members = await User.find({username:{ $in: memberNames}})
+      for(let i=0; i < members.length ; i++) {
+        memberIds.push(members[i]._id)
       }
       memberIds.unshift(context.user._id);
+
+      if(isDM) title = context.user.username + " @ " + title;
 
       const thread = await Thread.create({
         title,
