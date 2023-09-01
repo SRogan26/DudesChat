@@ -5,19 +5,20 @@ import { useMutation } from "@apollo/client";
 import { CREATE_DMTHREAD } from "../../../utils/mutations";
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function DMForm() {
   const [userToDm, setUserToDm] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const [addThread, { error, data }] = useMutation(CREATE_DMTHREAD);
 
@@ -31,7 +32,7 @@ export default function DMForm() {
     if (!userToDm) return;
     try {
       const { data } = await addThread({
-        variables: { title: userToDm, memberNames: [userToDm], isDm:true },
+        variables: { title: userToDm, memberNames: [userToDm], isDm: true },
       });
       console.log(data);
       setUserToDm("");
@@ -39,7 +40,7 @@ export default function DMForm() {
       if (err.graphQLErrors[0].extensions.code === "UNAUTHENTICATED") {
         localStorage.removeItem("auth_token");
       }
-      console.log(err);
+      setErrorMessage(err.message);
     }
   };
   return (
@@ -49,17 +50,17 @@ export default function DMForm() {
         "& .MuiTextField-root": {
           m: 1,
           width: "75%",
-          minWidth:"50%",
-          minHeight:"50%",
-          position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-          bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    display: 'flex',
-    justifyContent:'center'
+          minWidth: "50%",
+          minHeight: "50%",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          bgcolor: "background.paper",
+          border: "2px solid #000",
+          boxShadow: 24,
+          display: "flex",
+          justifyContent: "center",
         },
       }}
       noValidate
@@ -68,7 +69,8 @@ export default function DMForm() {
     >
       <TextField
         fullWidth
-        helperText="Who Do You Want to DudeMessage?"
+        error={errorMessage ? true : false}
+        helperText={error ? errorMessage : "Who Do You Want to DudeMessage?"}
         id="add-message"
         value={userToDm}
         name="userToDm"

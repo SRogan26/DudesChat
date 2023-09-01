@@ -94,9 +94,29 @@ export const resolvers = {
       const memberIds = [];
       
       const members = await User.find({username:{ $in: memberNames}})
+      //Need error handling if a non existing memberName
+      // is in the sent array of members
+      if(members.length !== memberNames.length) {
+        let invalidUsers;
+        const returnedUsers = members.map(member=>member.username)
+        invalidUsers = memberNames.filter(name => !returnedUsers.includes(name))
+        
+        const wrongUserErr = new GraphQLError(
+          `The following Usernames do not exist:
+            ${invalidUsers.toString()}
+          `, 
+        {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+        throw wrongUserErr
+      }
+      
       for(let i=0; i < members.length ; i++) {
         memberIds.push(members[i]._id)
       }
+
       memberIds.unshift(context.user._id);
 
       if(isDM) title = context.user.username + " @ " + title;
