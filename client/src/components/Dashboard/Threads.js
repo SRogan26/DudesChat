@@ -12,6 +12,7 @@ import { GET_THREADS } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
 import stringAvatar from "../../utils/avatarStyle";
 import DMForm from "./FormModal/DMForm";
+import DGForm from "./FormModal/DGForm";
 import { useEffect } from "react";
 
 function Thread({ thread, open, setActiveThread }) {
@@ -147,6 +148,7 @@ export default function Threads({ open, setActiveThread, handleModalOpen }) {
           open={open}
           title="DudeGroup"
           handleModalOpen={handleModalOpen}
+          FormComponent={DGForm}
         />
       </List>
       {/* End Bottom Threads section */}

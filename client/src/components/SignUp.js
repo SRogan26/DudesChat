@@ -128,12 +128,12 @@ export default function SignUp() {
                   value={state.username}
                   onChange={handleChange}
                   autoComplete='username'
-                  error={state.username.length <= 6 && state.username.length > 0}
+                  error={state.username.length < 6 && state.username.length > 0}
                   helperText={state.username.length <= 6 && state.username.length >= 0 ? 
                     'Username must have at least 6 characters' :
                     'Username is long enough'
                   }
-                  color={state.username.length <= 6 && state.username.length >= 0 ? 
+                  color={state.username.length < 6 && state.username.length >= 0 ? 
                     'primary' :
                     'success'
                   }
@@ -152,12 +152,12 @@ export default function SignUp() {
                   value={state.password}
                   onChange={handleChange}
                   autoComplete='new-password'
-                  error={state.password.length <= 8 && state.password.length > 0}
-                  helperText={state.password.length <= 8 && state.password.length >= 0 ? 
+                  error={state.password.length < 8 && state.password.length > 0}
+                  helperText={state.password.length < 8 && state.password.length >= 0 ? 
                     'Password must have at least 8 characters' :
                     'Password is long enough'
                   }
-                  color={state.password.length <= 8 && state.password.length >= 0 ? 
+                  color={state.password.length < 8 && state.password.length >= 0 ? 
                     'primary' :
                     'success'
                   }

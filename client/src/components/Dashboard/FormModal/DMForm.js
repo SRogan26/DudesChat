@@ -4,17 +4,6 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_DMTHREAD } from "../../../utils/mutations";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 
 export default function DMForm() {
   const [userToDm, setUserToDm] = useState("");
@@ -47,20 +36,21 @@ export default function DMForm() {
     <Box
       component="form"
       sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "60%",
+        minHeight: "fit-content",
+        border: "2px solid #000",
+        boxShadow: 24,
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        bgcolor: "background.paper",
+        m: 1,
+        justifyContent: "space-between",
         "& .MuiTextField-root": {
-          m: 1,
-          width: "75%",
-          minWidth: "50%",
-          minHeight: "50%",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          bgcolor: "background.paper",
-          border: "2px solid #000",
-          boxShadow: 24,
-          display: "flex",
-          justifyContent: "center",
+          p: 2,
         },
       }}
       noValidate

@@ -179,12 +179,6 @@ export default function Dashboard() {
           justifyContent: "space-between",
         }}
       >
-        {modalInfo.form && <FormModal
-          showModal={modalInfo.show}
-          setModalInfo={setModalInfo}
-          handleModalClose={handleModalClose}
-          ModalForm={modalInfo.form}
-        />}
         <div>
           <DrawerHeader />
           {/* Begin Messages Area */}
@@ -192,6 +186,12 @@ export default function Dashboard() {
             <MessagesWithData activeThread={activeThread} />
           )}
         </div>
+        {modalInfo.form && <FormModal
+          showModal={modalInfo.show}
+          setModalInfo={setModalInfo}
+          handleModalClose={handleModalClose}
+          ModalForm={modalInfo.form}
+          />}
         {activeThread && userLogged && (
           <AddMessage activeThread={activeThread} />
         )}
