@@ -36,9 +36,7 @@ export default function DGForm() {
     }
   };
 
-  const handleRemove = (event) => {
-    event.preventDefault();
-    const userToRemove = event.target.parentElement.parentElement.innerText;
+  const handleRemove = (userToRemove) => {
     setUsersToDg(usersToDg.filter((user) => user !== userToRemove));
   };
 
@@ -93,9 +91,8 @@ export default function DGForm() {
     >
       <TextField
         fullWidth
-        error={title.length < 6 && title.length > 0}
         helperText={
-          error
+          (title.length < 6 && title.length > 0)
             ? "Title should be at least 6 characters long"
             : "What is the Title of This DudeGroup?"
         }
@@ -156,7 +153,7 @@ export default function DGForm() {
         >
           {usersToDg.map((user, index) => (
             <Grid item xs={2} sm={4} md={4} key={index}>
-              <Chip label={user} onDelete={handleRemove} />
+              <Chip label={user} onDelete={() => handleRemove(user)} />
             </Grid>
           ))}
         </Grid>
