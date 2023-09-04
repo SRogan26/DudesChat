@@ -1,6 +1,16 @@
 import { GraphQLError } from "graphql";
 import { User, Thread, Message } from "../models/index.js";
 import { signAuthToken } from "../utils/auth.mjs";
+import { PubSub, withFilter } from "graphql-subscriptions";
+
+const pubsub = new PubSub();
+
+const unauthenticated = new GraphQLError("User is not authenticated", {
+  extensions: {
+    code: "UNAUTHENTICATED",
+    http: { status: 401 },
+  },
+});
 
 // A map of functions which return data for the schema.
 export const resolvers = {
@@ -13,39 +23,22 @@ export const resolvers = {
       if (context.user) {
         return await User.findOne({ username });
       }
-      throw new GraphQLError("User is not authenticated", {
-        extensions: {
-          code: "UNAUTHENTICATED",
-          http: { status: 401 },
-        },
-      });
+      throw unauthenticated;
     },
     threadsByUser: async (_, {}, context) => {
-      if (!context.user) {
-        throw new GraphQLError("User is not authenticated", {
-          extensions: {
-            code: "UNAUTHENTICATED",
-            http: { status: 401 },
-          },
-        });
-      }
-      const threadsList = await Thread.find({memberIds: context.user._id})
-      
+      if (!context.user) throw unauthenticated;
+      const threadsList = await Thread.find({ memberIds: context.user._id });
+
       return threadsList;
     },
-    messagesByThread: async (_,{threadId}, context) => {
-      if (!context.user) {
-        throw new GraphQLError("User is not authenticated", {
-          extensions: {
-            code: "UNAUTHENTICATED",
-            http: { status: 401 },
-          },
-        });
-      }
-      const messageList = await Message.find({threadId}).populate('authorId').exec()
-      
-      return messageList
-    }
+    messagesByThread: async (_, { threadId }, context) => {
+      if (!context.user) throw unauthenticated;
+      const messageList = await Message.find({ threadId })
+        .populate("authorId")
+        .exec();
+
+      return messageList;
+    },
   },
   Mutation: {
     addUser: async (_, { username, email, password, firstName, lastName }) => {
@@ -82,32 +75,51 @@ export const resolvers = {
       return { authToken, user };
     },
     addMessage: async (_, { messageBody, threadId }, context) => {
-      if (!context.user) {
-        throw new GraphQLError("User is not authenticated", {
-          extensions: {
-            code: "UNAUTHENTICATED",
-            http: { status: 401 },
-          },
-        });
-      }
+      if (!context.user) throw unauthenticated;
       const message = await Message.create({
         messageBody,
         authorId: context.user._id,
         threadId,
       });
-      const parsedMessage = message.toJSON()
+      const userData = await User.find({_id: context.user._id})
+      const parsedMessage = message.toJSON();
+      parsedMessage.authorId = userData[0]
+      pubsub.publish("MESSAGE_POSTED", { messagePosted: {...parsedMessage} });
+
       return { ...parsedMessage };
     },
-    addThread: async (_, { title, memberIds, isDM }, context) => {
-      if (!context.user) {
-        throw new GraphQLError("User is not authenticated", {
+    addThread: async (_, { title, memberNames, isDM }, context) => {
+      if (!context.user) throw unauthenticated;
+
+      const memberIds = [];
+      
+      const members = await User.find({username:{ $in: memberNames}})
+      //Need error handling if a non existing memberName
+      // is in the sent array of members
+      if(members.length !== memberNames.length) {
+        let invalidUsers;
+        const returnedUsers = members.map(member=>member.username)
+        invalidUsers = memberNames.filter(name => !returnedUsers.includes(name))
+        
+        const wrongUserErr = new GraphQLError(
+          `The following Usernames do not exist:
+            ${invalidUsers.toString()}
+          `, 
+        {
           extensions: {
-            code: "UNAUTHENTICATED",
-            http: { status: 401 },
+            code: "BAD_USER_INPUT",
           },
         });
+        throw wrongUserErr
       }
-memberIds.unshift(context.user._id);
+      
+      for(let i=0; i < members.length ; i++) {
+        memberIds.push(members[i]._id)
+      }
+
+      memberIds.unshift(context.user._id);
+
+      if(isDM) title = context.user.username + " @ " + title;
 
       const thread = await Thread.create({
         title,
@@ -117,6 +129,18 @@ memberIds.unshift(context.user._id);
       });
       const parsedThread = thread.toJSON();
       return { ...parsedThread };
+    },
+  },
+  Subscription: {
+    messagePosted: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(["MESSAGE_POSTED"]),
+        (payload, variables) => {
+          console.log(payload.messagePosted.threadId.toString(), variables.threadId)
+          console.log(payload.messagePosted.threadId.toString() === variables.threadId)
+          return payload.messagePosted.threadId.toString() === variables.threadId;
+        }
+      ),
     },
   },
 };

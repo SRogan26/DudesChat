@@ -16,7 +16,7 @@ import PageRouter from "./pages/PageRouter";
 const httpLink = createHttpLink({ uri: "/graphql" });
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: "/subscriptions"
+  url: "ws://localhost:4000/"
 }))
 
 const splitLink = split(

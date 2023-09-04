@@ -33,3 +33,17 @@ export const POST_MESSAGE = gql`
     }
   }
 `
+
+export const CREATE_DMTHREAD = gql`
+  mutation Mutation($title: String!, $isDm: Boolean!, $memberNames: [String!]) {
+    addThread(title: $title, isDM: $isDm, memberNames: $memberNames) {
+      updatedAt
+      title
+      memberIds
+      isDM
+      creatorId
+      createdAt
+      _id
+    }
+  }
+`

@@ -10,59 +10,102 @@ import { useQuery } from "@apollo/client";
 import { useUserContext } from "../../utils/userContext";
 import { useEffect } from "react";
 import stringAvatar from "../../utils/avatarStyle";
+import { MESSAGE_POSTED } from "../../utils/subscriptions";
 
+function Messages({ data, subscribeToNewMessages, activeThread }) {
 
-export default function Messages({ activeThread }) {
-  const {setUserLogged} = useUserContext()
+  const results = data.messagesByThread
 
-  useEffect(()=>{
-    if(!localStorage.getItem("auth_token")){
-      console.log("begone from this place fiend")
-      setUserLogged(false)
+  
+
+  useEffect(() => {
+    
+    const unsubscribe = subscribeToNewMessages({
+      document: MESSAGE_POSTED,
+      variables: { threadId: activeThread},
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newFeedItem = subscriptionData.data.messagePosted;
+        return Object.assign({}, prev, {
+          messagesByThread: [...prev.messagesByThread, newFeedItem ],
+        })
+      }
+    })
+    
+    return () => unsubscribe()
+  }
+  , [activeThread]);
+  
+  
+  return (
+    <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+      {results.map((message) => (
+        <div key={message._id}>
+          <ListItem alignItems="flex-start">
+            <ListItemAvatar>
+              <Avatar {...stringAvatar(message.authorId.username)} />
+            </ListItemAvatar>
+            <ListItemText
+              primary={
+                message.authorId.username +
+                " @ " +
+                new Date(message.updatedAt).toLocaleString()
+              }
+              secondary={
+                <Typography
+                  sx={{ display: "inline" }}
+                  component="span"
+                  variant="body1"
+                  color="text.primary"
+                >
+                  {message.messageBody}
+                </Typography>
+              }
+            />
+          </ListItem>
+          <Divider variant="inset" component="li" />
+        </div>
+      ))}
+      {/* End Messages Area */}
+    </List>
+  );
+}
+
+export default function MessagesWithData({ activeThread }) {
+  const { setUserLogged } = useUserContext();
+
+  useEffect(() => {
+    if (!localStorage.getItem("auth_token")) {
+      console.log("begone from this place fiend");
+      setUserLogged(false);
     }
-  })
+  });
 
-  const { loading, error, data } = useQuery(GET_MESSAGES, {
+  const { subscribeToMore, loading, error, data } = useQuery(GET_MESSAGES, {
     variables: { threadId: activeThread },
+    options:{
+      fetchPolicy: 'network-only'
+    }
   });
   if (loading) {
     console.log("loading");
     return;
   }
   if (error) {
-    if(error.message === "User is not authenticated") {
-      localStorage.removeItem("auth_token")
+    if (error.graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+      localStorage.removeItem("auth_token");
     }
-    console.log(error);
+    console.log({...error});
     return;
   }
-  if (data.messagesByThread.length === 0) return (<div key='None'>No Messages in This Thread</div>)
-  else {return (
-      <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-        {data.messagesByThread.map((message) => (
-          <div key={message._id}>
-            <ListItem alignItems="flex-start">
-              <ListItemAvatar>
-                <Avatar {...stringAvatar(message.authorId.username)} />
-              </ListItemAvatar>
-              <ListItemText
-                primary={message.authorId.username + " @ " + new Date(message.updatedAt).toLocaleString()}
-                secondary={
-                    <Typography
-                      sx={{ display: "inline" }}
-                      component="span"
-                      variant="body1"
-                      color="text.primary"
-                    >
-                      {message.messageBody}
-                    </Typography>
-                }
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" />
-          </div>
-        ))}
-      {/* End Messages Area */}
-      </List>
-  )}
+
+  return (
+    <Messages
+      activeThread={activeThread}
+      data = {data}
+      subscribeToNewMessages={
+        subscribeToMore
+      }
+    />
+  );
 }

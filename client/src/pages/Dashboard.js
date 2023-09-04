@@ -14,9 +14,10 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Threads from "../components/Dashboard/Threads";
-import Messages from "../components/Dashboard/Messages";
+import MessagesWithData from "../components/Dashboard/Messages";
 import AddMessage from "../components/Dashboard/AddMessage";
 import { useUserContext } from "../utils/userContext";
+import FormModal from "../components/Dashboard/FormModal";
 
 const drawerWidth = 240;
 
@@ -88,7 +89,14 @@ const Drawer = styled(MuiDrawer, {
 export default function Dashboard() {
   const [activeThread, setActiveThread] = useState("");
   const { userLogged, setUserLogged, currentUser } = useUserContext();
-  // const [messagesList, setMessagesList] = useState([]);
+  const [modalInfo, setModalInfo] = useState({form: null, show:false});
+  const handleModalOpen = (Component) => {
+    console.log(Component)
+    setModalInfo({form: Component, show:true})
+  };
+  const handleModalClose = () => {
+    setModalInfo({form: null, show: false})
+  };
 
   useEffect(() => {
     if ((!localStorage.getItem("auth_token") && userLogged) || !currentUser) {
@@ -157,7 +165,7 @@ export default function Dashboard() {
         </DrawerHeader>
         <Divider />
         {/* Begin top Threads Section */}
-        <Threads open={open} setActiveThread={setActiveThread} />
+        <Threads open={open} setActiveThread={setActiveThread} handleModalOpen={handleModalOpen} />
         {/* Begin bottom threads */}
       </Drawer>
       <Box
@@ -175,9 +183,15 @@ export default function Dashboard() {
           <DrawerHeader />
           {/* Begin Messages Area */}
           {activeThread && userLogged && (
-            <Messages activeThread={activeThread} />
+            <MessagesWithData activeThread={activeThread} />
           )}
         </div>
+        {modalInfo.form && <FormModal
+          showModal={modalInfo.show}
+          setModalInfo={setModalInfo}
+          handleModalClose={handleModalClose}
+          ModalForm={modalInfo.form}
+          />}
         {activeThread && userLogged && (
           <AddMessage activeThread={activeThread} />
         )}
