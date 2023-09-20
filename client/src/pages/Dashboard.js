@@ -124,7 +124,7 @@ export default function Dashboard() {
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", height: "100vh", }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -175,11 +175,11 @@ export default function Dashboard() {
           flexDirection: "column",
           flexGrow: 1,
           p: 3,
-          minHeight: "100%",
+          maxHeight: "100%",
           justifyContent: "space-between",
         }}
       >
-        <div>
+        <div style={{overflow: "auto",}}>
           <DrawerHeader />
           {/* Begin Messages Area */}
           {activeThread && userLogged && (
@@ -192,10 +192,10 @@ export default function Dashboard() {
           handleModalClose={handleModalClose}
           ModalForm={modalInfo.form}
           />}
+        {/* End Messages Area */}
         {activeThread && userLogged && (
           <AddMessage activeThread={activeThread} />
         )}
-        {/* End Messages Area */}
       </Box>
     </Box>
   );

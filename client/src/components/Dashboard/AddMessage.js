@@ -34,7 +34,7 @@ export default function AddMessage({activeThread}) {
     <Box
       component="form"
       sx={{
-        '& .MuiTextField-root': { m: 1, width: '100%', justifySelf: 'flex-end' },
+        '& .MuiTextField-root': { m: 1, width: '100%', justifySelf: 'flex-end',},
       }}
       noValidate
       autoComplete="off"

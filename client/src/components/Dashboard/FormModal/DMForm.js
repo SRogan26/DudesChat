@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_DMTHREAD } from "../../../utils/mutations";
 
-
-export default function DMForm() {
+export default function DMForm({ formStyles }) {
   const [userToDm, setUserToDm] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -36,22 +35,7 @@ export default function DMForm() {
     <Box
       component="form"
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "60%",
-        minHeight: "fit-content",
-        border: "2px solid #000",
-        boxShadow: 24,
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        bgcolor: "background.paper",
-        m: 1,
-        justifyContent: "space-between",
-        "& .MuiTextField-root": {
-          p: 2,
-        },
+        ...formStyles,
       }}
       noValidate
       autoComplete="off"

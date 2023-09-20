@@ -38,7 +38,7 @@ function Messages({ data, subscribeToNewMessages, activeThread }) {
   
   
   return (
-    <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+    <List sx={{ width: "100%", bgcolor: "background.paper", }}>
       {results.map((message) => (
         <div key={message._id}>
           <ListItem alignItems="flex-start">
