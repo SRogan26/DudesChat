@@ -9,8 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 
-
-export default function DGForm() {
+export default function DGForm({ formStyles }) {
   const [usersToDg, setUsersToDg] = useState([]);
   const [userToAdd, setUserToAdd] = useState("");
   const [title, setTitle] = useState("");
@@ -56,7 +55,7 @@ export default function DGForm() {
       console.log(data);
       if (errorMessage) setErrorMessage(null);
       setUsersToDg([]);
-      setTitle("")
+      setTitle("");
     } catch (err) {
       if (err.graphQLErrors[0].extensions.code === "UNAUTHENTICATED") {
         localStorage.removeItem("auth_token");
@@ -67,24 +66,7 @@ export default function DGForm() {
   return (
     <Box
       component="form"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "60%",
-        minHeight: "fit-content",
-        border: "2px solid #000",
-        boxShadow: 24,
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        bgcolor: "background.paper",
-        m: 1,
-        justifyContent: "space-between",
-        "& .MuiTextField-root": {
-          p: 2,
-        },
-      }}
+      sx={{ ...formStyles }}
       noValidate
       autoComplete="off"
       onSubmit={handleSubmit}
@@ -92,7 +74,7 @@ export default function DGForm() {
       <TextField
         fullWidth
         helperText={
-          (title.length < 6 && title.length > 0)
+          title.length < 6 && title.length > 0
             ? "Title should be at least 6 characters long"
             : "What is the Title of This DudeGroup?"
         }
@@ -138,11 +120,11 @@ export default function DGForm() {
       <Box
         sx={{
           flexGrow: 1,
-          height: "90%",
+          height: "100%",
           minHeight: 400,
-          width: "90%",
-          border: "1px solid #000",
-          m: 2,
+          width: "100%",
+          textAlign: "center",
+          border:"solid 1px red"
         }}
       >
         Members To Add:
@@ -152,7 +134,7 @@ export default function DGForm() {
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
           {usersToDg.map((user, index) => (
-            <Grid item xs={2} sm={4} md={4} key={index}>
+            <Grid item xs={2} sm={4} md={3} key={index}>
               <Chip label={user} onDelete={() => handleRemove(user)} />
             </Grid>
           ))}
