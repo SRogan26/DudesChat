@@ -4,12 +4,13 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
 import { useUserContext } from "../utils/userContext";
 import LoginSignUp from "./LoginSignUp";
 import Dashboard from "./Dashboard";
 
 export default function PageRouter() {
-  const { userLogged } = useUserContext();
+  const { userLogged, theme } = useUserContext();
 
   const LoggedRoutes = () => {
     return (
@@ -29,5 +30,11 @@ export default function PageRouter() {
     );
   };
 
-  return <Router>{userLogged ? <LoggedRoutes /> : <UnloggedRoutes />}</Router>;
+  return (
+      <ThemeProvider theme={theme}>
+    <Router>
+        {userLogged ? <LoggedRoutes /> : <UnloggedRoutes />}
+    </Router>
+      </ThemeProvider>
+  );
 }

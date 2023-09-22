@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import {useSearchParams} from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { styled, useTheme } from "@mui/material/styles";
@@ -19,7 +20,7 @@ import AddMessage from "../components/Dashboard/AddMessage";
 import { useUserContext } from "../utils/userContext";
 import FormModal from "../components/Dashboard/FormModal";
 
-const drawerWidth = 240;
+const drawerWidth = 400;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -87,8 +88,14 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Dashboard() {
-  const [activeThread, setActiveThread] = useState("");
-  const { userLogged, setUserLogged, currentUser } = useUserContext();
+  //Want to get things like active thread into the URL
+  //So it can persist when there is a re-render 
+  //due to theme switch
+  const [params, setParams] = useSearchParams();
+  const currentParams = Object.fromEntries([...params])
+  const currentThread = currentParams.activeThread ? currentParams.activeThread : ''
+  const [activeThread, setActiveThread] = useState(currentThread);
+  const { userLogged, setUserLogged, currentUser, currentTheme, setCurrentTheme } = useUserContext();
   const [modalInfo, setModalInfo] = useState({form: null, show:false});
   const handleModalOpen = (Component) => {
     console.log(Component)
@@ -112,7 +119,13 @@ export default function Dashboard() {
     setUserLogged(false);
   };
 
+  const toggleTheme = () => {
+    const newTheme = Math.abs(currentTheme - 1)
+    setCurrentTheme(newTheme)
+  }
+
   const theme = useTheme();
+  
   const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
@@ -145,7 +158,7 @@ export default function Dashboard() {
           </Typography>
           {/* vv User and Logout buttons vv */}
           <Stack spacing={2} direction="row">
-            <Button variant="contained">{userName || "Who?"}</Button>
+            <Button variant="contained" onClick={toggleTheme}>{userName || "Who?"}</Button>
             <Button variant="contained" onClick={handleLogOut}>
               Log Out
             </Button>

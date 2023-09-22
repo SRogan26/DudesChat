@@ -11,13 +11,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useMutation } from '@apollo/client';
 import { USER_LOGIN } from '../utils/mutations';
 import { UseLogIn } from "../utils/authenticate";
 import { useUserContext } from '../utils/userContext';
-
-const theme = createTheme();
 
 export default function Login() {
   const [state, setState] = useState({ email: '', password: '' });
@@ -49,7 +46,6 @@ export default function Login() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -116,6 +112,5 @@ export default function Login() {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
   );
 }
