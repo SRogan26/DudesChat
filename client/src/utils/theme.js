@@ -23,6 +23,7 @@ const mainThemeOptions = {
     },
     typography: {
         fontFamily: '\'Inconsolata\', monospace',
+        fontSize: 16,
       },
   };
 

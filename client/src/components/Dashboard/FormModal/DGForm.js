@@ -124,7 +124,7 @@ export default function DGForm({ formStyles }) {
           minHeight: 400,
           width: "100%",
           textAlign: "center",
-          border:"solid 1px red"
+          border: "solid 1px red",
         }}
       >
         Members To Add:
@@ -135,7 +135,10 @@ export default function DGForm({ formStyles }) {
         >
           {usersToDg.map((user, index) => (
             <Grid item xs={2} sm={4} md={3} key={index}>
-              <Chip label={user} onDelete={() => handleRemove(user)} />
+              <Chip
+                label={user}
+                onDelete={() => handleRemove(user)}
+              />
             </Grid>
           ))}
         </Grid>

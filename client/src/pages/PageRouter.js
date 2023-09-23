@@ -31,10 +31,8 @@ export default function PageRouter() {
   };
 
   return (
-      <ThemeProvider theme={theme}>
-    <Router>
-        {userLogged ? <LoggedRoutes /> : <UnloggedRoutes />}
-    </Router>
-      </ThemeProvider>
+    <ThemeProvider theme={theme}>
+      <Router>{userLogged ? <LoggedRoutes /> : <UnloggedRoutes />}</Router>
+    </ThemeProvider>
   );
 }
