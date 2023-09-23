@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, } from "react";
 import {useSearchParams} from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -93,12 +93,11 @@ export default function Dashboard() {
   //due to theme switch
   const [params, setParams] = useSearchParams();
   const currentParams = Object.fromEntries([...params])
-  const currentThread = currentParams.activeThread ? currentParams.activeThread : ''
+  const currentThread = currentParams.threadId ? currentParams.threadId : ''
   const [activeThread, setActiveThread] = useState(currentThread);
   const { userLogged, setUserLogged, currentUser, currentTheme, setCurrentTheme } = useUserContext();
   const [modalInfo, setModalInfo] = useState({form: null, show:false});
   const handleModalOpen = (Component) => {
-    console.log(Component)
     setModalInfo({form: Component, show:true})
   };
   const handleModalClose = () => {
@@ -111,6 +110,13 @@ export default function Dashboard() {
       setUserLogged(false);
     }
   });
+
+  useEffect(()=>{
+    const currentParams = Object.fromEntries([...params])
+    if(currentParams.threadId !== activeThread) {
+      setActiveThread(currentParams.threadId)
+    }
+  }, [params])
 
   const userName = currentUser?.username;
 
@@ -178,7 +184,7 @@ export default function Dashboard() {
         </DrawerHeader>
         <Divider />
         {/* Begin top Threads Section */}
-        <Threads open={open} setActiveThread={setActiveThread} handleModalOpen={handleModalOpen} />
+        <Threads open={open} handleModalOpen={handleModalOpen} />
         {/* Begin bottom threads */}
       </Drawer>
       <Box
@@ -192,7 +198,7 @@ export default function Dashboard() {
           justifyContent: "space-between",
         }}
       >
-        <div style={{overflow: "auto",}}>
+        <div style={{overflow: "auto", }}>
           <DrawerHeader />
           {/* Begin Messages Area */}
           {activeThread && userLogged && (

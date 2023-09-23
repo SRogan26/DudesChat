@@ -14,10 +14,12 @@ import stringAvatar from "../../utils/avatarStyle";
 import DMForm from "./FormModal/DMForm";
 import DGForm from "./FormModal/DGForm";
 import { useEffect } from "react";
+import {useSearchParams} from "react-router-dom";
 
-function Thread({ thread, open, setActiveThread }) {
+function Thread({ thread, open }) {
+  const [params, setParams] = useSearchParams()
   const handleSelect = (e) => {
-    setActiveThread(e.target.closest("li").id);
+    setParams({...params, threadId: e.target.closest("li").id})
   };
 
   return (
@@ -87,7 +89,7 @@ function AddThread({ title, open, handleModalOpen, FormComponent }) {
   );
 }
 
-export default function Threads({ open, setActiveThread, handleModalOpen }) {
+export default function Threads({ open, handleModalOpen }) {
   useEffect(() => {
     const pollingInt = setInterval(() => refetch(), 2000);
     return (() => {
@@ -120,7 +122,6 @@ export default function Threads({ open, setActiveThread, handleModalOpen }) {
               key={thread._id}
               thread={thread}
               open={open}
-              setActiveThread={setActiveThread}
             />
           ))}
         <AddThread
@@ -141,7 +142,6 @@ export default function Threads({ open, setActiveThread, handleModalOpen }) {
               key={thread._id}
               thread={thread}
               open={open}
-              setActiveThread={setActiveThread}
             />
           ))}
         <AddThread

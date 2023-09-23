@@ -8,18 +8,20 @@ import Typography from "@mui/material/Typography";
 import { GET_MESSAGES } from "../../utils/queries";
 import { useQuery } from "@apollo/client";
 import { useUserContext } from "../../utils/userContext";
-import { useEffect } from "react";
+import { useEffect,  useRef } from "react";
 import stringAvatar from "../../utils/avatarStyle";
 import { MESSAGE_POSTED } from "../../utils/subscriptions";
 
 function Messages({ data, subscribeToNewMessages, activeThread }) {
-
+  const newestMessage = useRef()
   const results = data.messagesByThread
 
-  
+  useEffect(()=>{
+    if(newestMessage.current)newestMessage.current.scrollIntoView()
+  })
 
   useEffect(() => {
-    
+   
     const unsubscribe = subscribeToNewMessages({
       document: MESSAGE_POSTED,
       variables: { threadId: activeThread},
@@ -39,8 +41,8 @@ function Messages({ data, subscribeToNewMessages, activeThread }) {
   
   return (
     <List sx={{ width: "100%"}}>
-      {results.map((message) => (
-        <div key={message._id}>
+      {results.map((message, i, a) => (
+        <div key={message._id} ref={i === a.length - 1 ? newestMessage : null}>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
               <Avatar {...stringAvatar(message.authorId.username)} />
