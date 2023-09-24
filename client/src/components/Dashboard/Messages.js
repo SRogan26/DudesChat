@@ -11,6 +11,7 @@ import { useUserContext } from "../../utils/userContext";
 import { useEffect,  useRef } from "react";
 import stringAvatar from "../../utils/avatarStyle";
 import { MESSAGE_POSTED } from "../../utils/subscriptions";
+import Spinner from "./Spinner";
 
 function Messages({ data, subscribeToNewMessages, activeThread }) {
   const newestMessage = useRef()
@@ -90,8 +91,7 @@ export default function MessagesWithData({ activeThread }) {
     }
   });
   if (loading) {
-    console.log("loading");
-    return;
+    return <Spinner />;
   }
   if (error) {
     if (error.graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
