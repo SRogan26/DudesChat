@@ -88,14 +88,13 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Dashboard() {
-  //Want to get things like active thread into the URL
-  //So it can persist when there is a re-render 
-  //due to theme switch
-  const [params, setParams] = useSearchParams();
+  const { userLogged, setUserLogged, currentUser, currentTheme, setCurrentTheme } = useUserContext();
+  const userName = currentUser?.username;
+  const initialParams = localStorage.getItem(userName) ? JSON.parse(localStorage.getItem(userName)) : {dOpen: false, thm: currentTheme}
+  const [params, setParams] = useSearchParams(initialParams);
   const currentParams = Object.fromEntries([...params])
   const currentThread = currentParams.threadId ? currentParams.threadId : ''
   const [activeThread, setActiveThread] = useState(currentThread);
-  const { userLogged, setUserLogged, currentUser, currentTheme, setCurrentTheme } = useUserContext();
   const [modalInfo, setModalInfo] = useState({form: null, show:false});
   const handleModalOpen = (Component) => {
     setModalInfo({form: Component, show:true})
@@ -103,6 +102,10 @@ export default function Dashboard() {
   const handleModalClose = () => {
     setModalInfo({form: null, show: false})
   };
+
+  const serializeParams = (queryParams) => {
+    return Object.fromEntries([...queryParams])
+  }
 
   useEffect(() => {
     if ((!localStorage.getItem("auth_token") && userLogged) || !currentUser) {
@@ -112,13 +115,12 @@ export default function Dashboard() {
   });
 
   useEffect(()=>{
-    const currentParams = Object.fromEntries([...params])
-    if(currentParams.threadId !== activeThread) {
-      setActiveThread(currentParams.threadId)
-    }
+    const currentParams = serializeParams(params)
+    if(currentParams.threadId && (currentParams.threadId !== activeThread)) setActiveThread(currentParams.threadId)
+    if(currentParams.dOpen && (currentParams.dOpen !== open.toString())) setOpen(!open)
+    if(currentParams.thm && (currentParams.thm !== currentTheme)) setCurrentTheme(currentParams.thm)
+    localStorage.setItem(userName, JSON.stringify(currentParams))
   }, [params])
-
-  const userName = currentUser?.username;
 
   const handleLogOut = () => {
     localStorage.removeItem("auth_token");
@@ -127,7 +129,8 @@ export default function Dashboard() {
 
   const toggleTheme = () => {
     const newTheme = Math.abs(currentTheme - 1)
-    setCurrentTheme(newTheme)
+    const currentParams = serializeParams(params)
+    setParams({...currentParams, thm: newTheme})
   }
 
   const theme = useTheme();
@@ -135,11 +138,13 @@ export default function Dashboard() {
   const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    const currentParams = serializeParams(params)
+    setParams({...currentParams, dOpen: true})
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    const currentParams = serializeParams(params)
+    setParams({...currentParams, dOpen: false})
   };
 
   return (

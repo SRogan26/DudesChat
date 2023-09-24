@@ -15,11 +15,13 @@ import DMForm from "./FormModal/DMForm";
 import DGForm from "./FormModal/DGForm";
 import { useEffect } from "react";
 import {useSearchParams} from "react-router-dom";
+import Spinner from "./Spinner";
 
 function Thread({ thread, open }) {
   const [params, setParams] = useSearchParams()
   const handleSelect = (e) => {
-    setParams({...params, threadId: e.target.closest("li").id})
+    const currentParams = Object.fromEntries([...params])
+    setParams({...currentParams, threadId: e.target.closest("li").id})
   };
 
   return (
@@ -101,8 +103,7 @@ export default function Threads({ open, handleModalOpen }) {
     fetchPolicy: "network-only",
   });
   if (loading) {
-    console.log("loading");
-    return;
+    return <Spinner />;
   }
   if (error) {
     if (error.graphQLErrors[0].extensions.code === "UNAUTHENTICATED") {
