@@ -1,7 +1,7 @@
 import { useContext, createContext, useState, useEffect } from "react";
 import { UseIsLoggedIn } from "./authenticate";
 import jwt_decode from "jwt-decode";
-import { mainTheme, funTheme } from "./theme";
+import { mainTheme, funTheme, pinkTheme, hackTheme } from "./theme";
 
 const UserContext = createContext();
 
@@ -14,8 +14,18 @@ export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(user);
   const themes = [
     mainTheme,
-    funTheme
+    funTheme,
+    pinkTheme,
+    hackTheme,
   ]
+  const themeNames = [
+    'Dudes',
+    'Retro',
+    'Sakura',
+    'Matrix'
+  ]
+  
+
   const [currentTheme, setCurrentTheme] = useState(1)
   const [theme, setTheme] = useState(themes[currentTheme])
 
@@ -39,7 +49,7 @@ export const UserProvider = ({ children }) => {
   }, [userLogged]);
 
   return (
-    <UserContext.Provider value={{ userLogged, setUserLogged , currentUser, theme, setCurrentTheme, currentTheme}}>
+    <UserContext.Provider value={{ userLogged, setUserLogged , currentUser, theme, setCurrentTheme, currentTheme, themeNames}}>
       {children}
     </UserContext.Provider>
   );
