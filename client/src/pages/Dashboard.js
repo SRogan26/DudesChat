@@ -1,5 +1,5 @@
-import { useState, useEffect, } from "react";
-import {useSearchParams} from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { styled, useTheme } from "@mui/material/styles";
@@ -19,6 +19,7 @@ import MessagesWithData from "../components/Dashboard/Messages";
 import AddMessage from "../components/Dashboard/AddMessage";
 import { useUserContext } from "../utils/userContext";
 import FormModal from "../components/Dashboard/FormModal";
+import UserMenu from "../components/Dashboard/UserMenu";
 
 const drawerWidth = 400;
 
@@ -88,24 +89,33 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Dashboard() {
-  const { userLogged, setUserLogged, currentUser, currentTheme, setCurrentTheme } = useUserContext();
+  const {
+    userLogged,
+    setUserLogged,
+    currentUser,
+    currentTheme,
+    setCurrentTheme,
+    themeNames,
+  } = useUserContext();
   const userName = currentUser?.username;
-  const initialParams = localStorage.getItem(userName) ? JSON.parse(localStorage.getItem(userName)) : {dOpen: false, thm: currentTheme}
+  const initialParams = localStorage.getItem(userName)
+    ? JSON.parse(localStorage.getItem(userName))
+    : { dOpen: false, thm: currentTheme };
   const [params, setParams] = useSearchParams(initialParams);
-  const currentParams = Object.fromEntries([...params])
-  const currentThread = currentParams.threadId ? currentParams.threadId : ''
+  const currentParams = Object.fromEntries([...params]);
+  const currentThread = currentParams.threadId ? currentParams.threadId : "";
   const [activeThread, setActiveThread] = useState(currentThread);
-  const [modalInfo, setModalInfo] = useState({form: null, show:false});
+  const [modalInfo, setModalInfo] = useState({ form: null, show: false });
   const handleModalOpen = (Component) => {
-    setModalInfo({form: Component, show:true})
+    setModalInfo({ form: Component, show: true });
   };
   const handleModalClose = () => {
-    setModalInfo({form: null, show: false})
+    setModalInfo({ form: null, show: false });
   };
 
   const serializeParams = (queryParams) => {
-    return Object.fromEntries([...queryParams])
-  }
+    return Object.fromEntries([...queryParams]);
+  };
 
   useEffect(() => {
     if ((!localStorage.getItem("auth_token") && userLogged) || !currentUser) {
@@ -114,41 +124,43 @@ export default function Dashboard() {
     }
   });
 
-  useEffect(()=>{
-    const currentParams = serializeParams(params)
-    if(currentParams.threadId && (currentParams.threadId !== activeThread)) setActiveThread(currentParams.threadId)
-    if(currentParams.dOpen && (currentParams.dOpen !== open.toString())) setOpen(!open)
-    if(currentParams.thm && (currentParams.thm !== currentTheme)) setCurrentTheme(currentParams.thm)
-    localStorage.setItem(userName, JSON.stringify(currentParams))
-  }, [params])
+  useEffect(() => {
+    const currentParams = serializeParams(params);
+    if (currentParams.threadId && currentParams.threadId !== activeThread)
+      setActiveThread(currentParams.threadId);
+    if (currentParams.dOpen && currentParams.dOpen !== open.toString())
+      setOpen(!open);
+    if (currentParams.thm && currentParams.thm !== currentTheme)
+      setCurrentTheme(currentParams.thm);
+    localStorage.setItem(userName, JSON.stringify(currentParams));
+  }, [params]);
 
   const handleLogOut = () => {
     localStorage.removeItem("auth_token");
     setUserLogged(false);
   };
 
-  const toggleTheme = () => {
-    const newTheme = Math.abs(currentTheme - 1)
-    const currentParams = serializeParams(params)
-    setParams({...currentParams, thm: newTheme})
-  }
+  const chooseTheme = (themeIndex) => {
+    const currentParams = serializeParams(params);
+    setParams({ ...currentParams, thm: themeIndex });
+  };
 
   const theme = useTheme();
-  
+
   const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
-    const currentParams = serializeParams(params)
-    setParams({...currentParams, dOpen: true})
+    const currentParams = serializeParams(params);
+    setParams({ ...currentParams, dOpen: true });
   };
 
   const handleDrawerClose = () => {
-    const currentParams = serializeParams(params)
-    setParams({...currentParams, dOpen: false})
+    const currentParams = serializeParams(params);
+    setParams({ ...currentParams, dOpen: false });
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", }}>
+    <Box sx={{ display: "flex", height: "100vh" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -169,10 +181,13 @@ export default function Dashboard() {
           </Typography>
           {/* vv User and Logout buttons vv */}
           <Stack spacing={2} direction="row">
-            <Button variant="contained" onClick={toggleTheme}>{userName || "Who?"}</Button>
-            <Button variant="contained" onClick={handleLogOut}>
-              Log Out
-            </Button>
+            <UserMenu
+              userName={userName}
+              themeNames={themeNames}
+              currentTheme={currentTheme}
+              chooseTheme={chooseTheme}
+              handleLogOut={handleLogOut}
+            />
           </Stack>
           {/* ^^ User and Logout buttons ^^ */}
         </Toolbar>
@@ -203,19 +218,21 @@ export default function Dashboard() {
           justifyContent: "space-between",
         }}
       >
-        <div style={{overflow: "auto", }}>
+        <div style={{ overflow: "auto" }}>
           <DrawerHeader />
           {/* Begin Messages Area */}
           {activeThread && userLogged && (
             <MessagesWithData activeThread={activeThread} />
           )}
         </div>
-        {modalInfo.form && <FormModal
-          showModal={modalInfo.show}
-          setModalInfo={setModalInfo}
-          handleModalClose={handleModalClose}
-          ModalForm={modalInfo.form}
-          />}
+        {modalInfo.form && (
+          <FormModal
+            showModal={modalInfo.show}
+            setModalInfo={setModalInfo}
+            handleModalClose={handleModalClose}
+            ModalForm={modalInfo.form}
+          />
+        )}
         {/* End Messages Area */}
         {activeThread && userLogged && (
           <AddMessage activeThread={activeThread} />
