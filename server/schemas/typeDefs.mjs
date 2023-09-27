@@ -7,6 +7,7 @@ export const typeDefs = `#graphql
     lastName: String
     email: String
     password: String
+    contactIds: [User]
   }
 
   type Auth {

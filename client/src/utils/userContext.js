@@ -24,8 +24,6 @@ export const UserProvider = ({ children }) => {
     'Sakura',
     'Matrix'
   ]
-  
-
   const [currentTheme, setCurrentTheme] = useState(1)
   const [theme, setTheme] = useState(themes[currentTheme])
 

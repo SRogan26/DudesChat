@@ -27,6 +27,10 @@ const userSchema = new Schema({
     required: true,
     minLength: [8, "Password needs at least 8 characters"],
   },
+  contactIds: [{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  }],
   firstName: String,
   lastName: String,
 });
