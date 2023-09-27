@@ -24,11 +24,13 @@ export default function SignUp() {
     username: '',
     password: '',
   });
+  const [existingUserError, setExistingUserError] = useState('')
 
   const [addUser, { error, data }] = useMutation(ADD_USER);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    if(Boolean(existingUserError)) setExistingUserError('')
     setState({ ...state, [name]: value });
   };
 
@@ -42,7 +44,7 @@ export default function SignUp() {
       UseLogIn(data.addUser.authToken);
       setUserLogged(true);
     } catch (err) {
-      console.log(err);
+      setExistingUserError(err.message)
     }
   };
 
@@ -123,7 +125,7 @@ export default function SignUp() {
                   value={state.username}
                   onChange={handleChange}
                   autoComplete='username'
-                  error={state.username.length < 6 && state.username.length > 0}
+                  error={(state.username.length < 6 && state.username.length > 0)}
                   helperText={state.username.length <= 6 && state.username.length >= 0 ? 
                     'Username must have at least 6 characters' :
                     'Username is long enough'
@@ -166,8 +168,9 @@ export default function SignUp() {
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
+              color={Boolean(existingUserError) ? 'error' : 'primary'}
             >
-              Sign Up
+              {Boolean(existingUserError) ? existingUserError : 'Sign Up'}
             </Button>
           </Box>
         </Box>
