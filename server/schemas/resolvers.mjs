@@ -42,23 +42,23 @@ export const resolvers = {
   },
   Mutation: {
     addUser: async (_, { username, email, password, firstName, lastName }) => {
-      const existingEmail = await User.findOne({email})
-      if(existingEmail) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
         throw new GraphQLError("That email has already created an account", {
-        extensions: {
-          code: "DUPLICATE_INPUT",
-        },
-      });
-    }
-    const existingUsername = await User.findOne({username})
-    if(existingUsername) {
-      throw new GraphQLError("That username is already in use", {
-      extensions: {
-        code: "DUPLICATE_INPUT",
-      },
-    });
-  }
-      
+          extensions: {
+            code: "DUPLICATE_INPUT",
+          },
+        });
+      }
+      const existingUsername = await User.findOne({ username });
+      if (existingUsername) {
+        throw new GraphQLError("That username is already in use", {
+          extensions: {
+            code: "DUPLICATE_INPUT",
+          },
+        });
+      }
+
       const user = await User.create({
         username,
         email,
@@ -85,7 +85,7 @@ export const resolvers = {
       if (!user) throw logInError;
       const isPassMatching = await user.validatePassword(password);
       if (!isPassMatching) throw logInError;
-      
+
       console.log(user._id, Date.now());
       const authToken = signAuthToken(user);
 
@@ -175,6 +175,39 @@ export const resolvers = {
       const parsedThread = thread.toJSON();
       return { ...parsedThread };
     },
+    addContact: async (_, { username }, context)=> {
+      if (!context.user) throw unauthenticated;
+      
+      const newContact = await User.findOne({ username });
+      //check if exists
+      if(!newContact) {
+        const noUserErr = new GraphQLError(
+          `User ${username} was not found`,
+          {
+            extensions: {
+              code: "BAD_USER_INPUT",
+            },
+          }
+        );
+        throw noUserErr;
+      }
+      //try adding to list
+      // const updateResult = newContact._id.toString()
+      const updateResult = await User.updateOne({_id: context.user._id},{$addToSet: {  contactIds: newContact._id.toString()}})
+      console.log(updateResult.modifiedCount)
+      if(updateResult.modifiedCount === 0){
+        const alreadyContactErr = new GraphQLError(
+          `${username} is already in your contacts list!`,
+          {
+            extensions: {
+              code: "DUPLICATE_INPUT",
+            },
+          }
+        );
+        throw alreadyContactErr;
+      }
+      return newContact;
+    }
   },
   Subscription: {
     messagePosted: {
